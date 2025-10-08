@@ -1,0 +1,26 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files we want to always be normalized and converted
+# to native line endings on checkout.
+*.js text
+*.jsx text
+*.ts text
+*.tsx text
+*.css text
+*.html text
+*.json text
+*.md text
+*.xml text
+*.gradle text
+*.properties text
+*.swift text
+*.plist text
+*.storyboard text
+*.xcprivacy text
+*.xcscheme text
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf

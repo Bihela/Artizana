@@ -1,0 +1,35 @@
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: Backend Tests
+          script:
+            - cd artizana-backend
+            - npm install
+            - npm test
+      - step:
+          name: Mobile Tests
+          script:
+            - cd artizana-mobile
+            - npm install
+            - npm test
+      - step:
+          name: Web Tests
+          script:
+            - cd artizana-web
+            - npm install
+            - npm test
+  branches:
+    main:
+      - step:
+          name: Run Tests on Main
+          script:
+            - cd artizana-backend
+            - npm install
+            - npm test
+            - cd ../artizana-mobile
+            - npm install
+            - npm test
+            - cd ../artizana-web
+            - npm install
+            - npm test
