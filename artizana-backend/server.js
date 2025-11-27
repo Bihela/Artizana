@@ -52,6 +52,8 @@ mongoose.connect(process.env.MONGO_URI)
 // IMPORT ROUTER CORRECTLY
 const { router: authRouter } = require('./src/routes/auth');
 app.use('/api/auth', authRouter);
+const ngoApplicationRoutes = require('./src/routes/ngoApplication');
+app.use('/api/ngo-applications', ngoApplicationRoutes);
 
 // Health check
 app.get('/', (req, res) => res.json({ message: 'Artizana Backend Running' }));
