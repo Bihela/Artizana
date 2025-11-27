@@ -1,26 +1,61 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, Alert, StyleSheet, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
-
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
 import Constants from 'expo-constants';
 
+WebBrowser.maybeCompleteAuthSession();
 
 // Dynamically load API base URL from Expo config
-const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5000/api';
+const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5001/api';
 
 export default function SignUp() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(''); 
-  const [role, setRole] = useState('Buyer'); // Default to Buyer 
+  const [role, setRole] = useState('Buyer'); 
   const [error, setError] = useState('');
 
-  const roles = ['Buyer', 'Artisan']; 
+  const roles = ['Buyer', 'Artisan'];
+
+  // Google Auth
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId: 'YOUR_EXPO_CLIENT_ID.apps.googleusercontent.com',
+    iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com',
+    androidClientId: 'YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com',
+    webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+  });
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      handleGoogleLogin(authentication.accessToken);
+    }
+  }, [response]);
+
+  const handleGoogleLogin = async (accessToken) => {
+    try {
+      // Send token to backend for validation & JWT creation
+      const res = await axios.post(`${API_BASE_URL}/auth/google-mobile`, { accessToken });
+      const { token, name: backendName, email: backendEmail, role: backendRole } = res.data;
+
+      setName(backendName);
+      setEmail(backendEmail);
+      if (backendRole) setRole(backendRole);
+
+      Alert.alert('Success', 'Google login successful! Complete your profile.');
+      // Optionally navigate to CompleteProfile or dashboard if role exists
+    } catch (err) {
+      console.log('Google Login Error:', err.response?.data || err.message);
+      Alert.alert('Error', 'Google login failed');
+    }
+  };
 
   const handleSignUp = async () => {
-    if (!name || !email || !password || !confirmPassword || !role) {
+    if (!name || !email || (!password && role !== 'Google') || !confirmPassword || !role) {
       setError('All fields are required.');
       Alert.alert('Error', 'All fields are required.');
       return;
@@ -53,7 +88,6 @@ export default function SignUp() {
       );
       Alert.alert('Success', 'Account created! Role-based access applied.');
       console.log('Response:', response.data);
-      // TODO: Save token to AsyncStorage, navigate to profile edit page based on role
     } catch (err) {
       console.log('Signup Error Details:', err);
       const errMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Sign-up failed.';
@@ -62,16 +96,18 @@ export default function SignUp() {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    Alert.alert('Info', 'Google sign-in functionality to be implemented');
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Artizana</Text>
       <Text style={styles.subtitle}>Create your Account</Text>
       <Text style={styles.description}>Join the Artizana community</Text>
 
+      <TextInput
+        style={styles.input}
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
+      />
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -94,16 +130,10 @@ export default function SignUp() {
         onChangeText={setConfirmPassword}
         secureTextEntry
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
-      />
+
       <Text style={styles.label}>Select Role:</Text>
       <View style={styles.pickerContainer}>
         <Picker
-          testID="picker"
           selectedValue={role}
           style={styles.picker}
           onValueChange={(itemValue) => setRole(itemValue)}
@@ -118,7 +148,12 @@ export default function SignUp() {
 
       <Button title="Sign Up" color="#4CAF50" onPress={handleSignUp} />
       <Text style={styles.or}>or</Text>
-      <Button title="Continue with Google" color="#4285F4" onPress={handleGoogleSignIn} />
+      <Button
+        title="Continue with Google"
+        color="#4285F4"
+        disabled={!request}
+        onPress={() => promptAsync()}
+      />
       <Text style={styles.ngo}>Apply as an NGO</Text>
     </View>
   );
