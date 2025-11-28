@@ -1,4 +1,4 @@
-// src/pages/NGOApplyForm.jsx  (or wherever you keep it)
+// src/pages/NGOApplyForm.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -73,6 +73,7 @@ export default function NGOApplyForm() {
               accept="image/*"
               onChange={handleLogoChange}
               className="hidden"
+              data-testid="logo-input"
             />
           </label>
         </div>
@@ -173,29 +174,34 @@ export default function NGOApplyForm() {
               />
             </div>
 
-            {/* File Uploads */}
+            {/* File Uploads - Registration Certificate */}
             <div>
-              <label className="block text-gray-700 font-medium mb-3">
+              <label htmlFor="certificate" className="block text-gray-700 font-medium mb-3">
                 Registration Certificate *
               </label>
               <input
+                id="certificate"
                 type="file"
                 name="certificate"
                 accept="image/*,.pdf"
                 required
+                data-testid="file-input"
                 className="w-full text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
               />
             </div>
 
+            {/* File Uploads - Additional Proof */}
             <div>
-              <label className="block text-gray-700 font-medium mb-3">
+              <label htmlFor="proof" className="block text-gray-700 font-medium mb-3">
                 Additional Proof (80G, 12A, etc.) *
               </label>
               <input
+                id="proof"
                 type="file"
                 name="proof"
                 accept="image/*,.pdf"
                 required
+                data-testid="file-input"
                 className="w-full text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
               />
             </div>
