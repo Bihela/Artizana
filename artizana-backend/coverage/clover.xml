@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1764351699999" clover="3.2.0">
-  <project timestamp="1764351699999" name="All files">
+<coverage generated="1764606139682" clover="3.2.0">
+  <project timestamp="1764606139682" name="All files">
     <metrics statements="99" coveredstatements="75" conditionals="42" coveredconditionals="29" methods="6" coveredmethods="2" elements="147" coveredelements="106" complexity="0" loc="99" ncloc="99" packages="4" files="7" classes="7"/>
     <package name="config">
       <metrics statements="14" coveredstatements="9" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
-      <file name="casbin.js" path="C:\Users\Harsha Wanasekara\Documents\Artizana\artizana-backend\src\config\casbin.js">
+      <file name="casbin.js" path="C:\Users\Home\Documents\artizana\sd07_2025\artizana-backend\src\config\casbin.js">
         <metrics statements="8" coveredstatements="3" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -15,7 +15,7 @@
         <line num="13" count="0" type="stmt"/>
         <line num="16" count="1" type="stmt"/>
       </file>
-      <file name="firebaseConfig.js" path="C:\Users\Harsha Wanasekara\Documents\Artizana\artizana-backend\src\config\firebaseConfig.js">
+      <file name="firebaseConfig.js" path="C:\Users\Home\Documents\artizana\sd07_2025\artizana-backend\src\config\firebaseConfig.js">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -27,13 +27,13 @@
     </package>
     <package name="models">
       <metrics statements="13" coveredstatements="9" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
-      <file name="NGOApplication.js" path="C:\Users\Harsha Wanasekara\Documents\Artizana\artizana-backend\src\models\NGOApplication.js">
+      <file name="NGOApplication.js" path="C:\Users\Home\Documents\artizana\sd07_2025\artizana-backend\src\models\NGOApplication.js">
         <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="2" count="2" type="stmt"/>
         <line num="4" count="2" type="stmt"/>
         <line num="25" count="2" type="stmt"/>
       </file>
-      <file name="User.js" path="C:\Users\Harsha Wanasekara\Documents\Artizana\artizana-backend\src\models\User.js">
+      <file name="User.js" path="C:\Users\Home\Documents\artizana\sd07_2025\artizana-backend\src\models\User.js">
         <metrics statements="10" coveredstatements="6" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -49,7 +49,7 @@
     </package>
     <package name="routes">
       <metrics statements="59" coveredstatements="53" conditionals="35" coveredconditionals="29" methods="2" coveredmethods="2"/>
-      <file name="auth.js" path="C:\Users\Harsha Wanasekara\Documents\Artizana\artizana-backend\src\routes\auth.js">
+      <file name="auth.js" path="C:\Users\Home\Documents\artizana\sd07_2025\artizana-backend\src\routes\auth.js">
         <metrics statements="27" coveredstatements="23" conditionals="14" coveredconditionals="9" methods="1" coveredmethods="1"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -79,7 +79,7 @@
         <line num="43" count="2" type="stmt"/>
         <line num="46" count="2" type="stmt"/>
       </file>
-      <file name="ngoApplication.js" path="C:\Users\Harsha Wanasekara\Documents\Artizana\artizana-backend\src\routes\ngoApplication.js">
+      <file name="ngoApplication.js" path="C:\Users\Home\Documents\artizana\sd07_2025\artizana-backend\src\routes\ngoApplication.js">
         <metrics statements="32" coveredstatements="30" conditionals="21" coveredconditionals="20" methods="1" coveredmethods="1"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -117,7 +117,7 @@
     </package>
     <package name="utils">
       <metrics statements="13" coveredstatements="4" conditionals="3" coveredconditionals="0" methods="1" coveredmethods="0"/>
-      <file name="uploadToFirebase.js" path="C:\Users\Harsha Wanasekara\Documents\Artizana\artizana-backend\src\utils\uploadToFirebase.js">
+      <file name="uploadToFirebase.js" path="C:\Users\Home\Documents\artizana\sd07_2025\artizana-backend\src\utils\uploadToFirebase.js">
         <metrics statements="13" coveredstatements="4" conditionals="3" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>

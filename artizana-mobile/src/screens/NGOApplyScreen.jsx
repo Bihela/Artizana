@@ -128,6 +128,7 @@ export default function NGOApplyScreen({ navigation }) {
 
         {/* NGO Logo Upload */}
         <TouchableOpacity
+          testID="logo-upload-button"
           style={styles.logoContainer}
           onPress={() => pickFile(setLogo, ['image/*'])}
         >
