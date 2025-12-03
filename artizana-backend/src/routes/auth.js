@@ -2,31 +2,30 @@ const express = require('express');
 const passport = require('../config/passport');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+const User = require('../models/User');
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-// Initiate Google OAuth
+// ===== WEB GOOGLE OAUTH =====
 router.get(
   '/google',
   passport.authenticate('google', {
     scope: ['profile', 'email'],
-    prompt: 'select_account' // ensures Google login page appears every time
+    prompt: 'select_account',
   })
 );
 
-// Google OAuth callback
 router.get(
   '/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: `${FRONTEND_URL}/login` }),
   (req, res) => {
-    // Generate JWT token
     const token = jwt.sign(
-      { id: req.user._id, email: req.user.email },
+      { id: req.user._id, email: req.user.email, role: req.user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    // Redirect based on role
     const redirectTo = req.user.role
       ? `${FRONTEND_URL}/${req.user.role === 'Buyer' ? 'buyer-dashboard' : 'artisan-dashboard'}?token=${token}`
       : `${FRONTEND_URL}/complete-profile?token=${token}`;
@@ -35,5 +34,55 @@ router.get(
     res.redirect(redirectTo);
   }
 );
+
+// ===== MOBILE GOOGLE LOGIN =====
+router.post('/google-mobile', async (req, res) => {
+  try {
+    const { accessToken } = req.body;
+    if (!accessToken) return res.status(400).json({ error: 'No access token provided' });
+
+    // Get user info from Google
+    const googleRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const profile = googleRes.data;
+
+    // Find or create user
+    let user = await User.findOne({ googleId: profile.sub });
+    if (!user) {
+      user = await User.findOne({ email: profile.email });
+      if (user) {
+        user.googleId = profile.sub;
+        await user.save();
+      }
+    }
+
+    if (!user) {
+      user = await User.create({
+        googleId: profile.sub,
+        name: profile.name,
+        email: profile.email,
+        role: null,
+      });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
+  } catch (err) {
+    console.error('Mobile Google login error:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Google login failed' });
+  }
+});
 
 module.exports = { router };

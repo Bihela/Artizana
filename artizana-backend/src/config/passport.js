@@ -1,6 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/User.js');
+const User = require('../models/User');
 
 console.log('GOOGLE_CLIENT_ID loaded:', !!process.env.GOOGLE_CLIENT_ID ? 'YES' : 'NO');
 
@@ -12,7 +12,6 @@ passport.use(new GoogleStrategy({
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     let user = await User.findOne({ googleId: profile.id });
-
     if (!user) {
       user = await User.findOne({ email: profile.emails[0].value });
       if (user) {
@@ -21,7 +20,6 @@ passport.use(new GoogleStrategy({
         return done(null, user);
       }
     }
-
     if (!user) {
       user = await User.create({
         googleId: profile.id,
@@ -30,7 +28,6 @@ passport.use(new GoogleStrategy({
         role: null
       });
     }
-
     done(null, user);
   } catch (err) { done(err); }
 }));

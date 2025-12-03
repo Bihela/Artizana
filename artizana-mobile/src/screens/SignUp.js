@@ -1,44 +1,57 @@
+
+// src/screens/SignUp.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
+import { makeRedirectUri } from 'expo-auth-session';  // Import this
 import Constants from 'expo-constants';
+import { useNavigation } from '@react-navigation/native';
 
 WebBrowser.maybeCompleteAuthSession();
 
-// Dynamically load API base URL from Expo config
-const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5001/api';
+const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://192.168.0.198:5001/api';
 
 export default function SignUp() {
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); 
-  const [role, setRole] = useState('Buyer'); 
-  const [error, setError] = useState('');
-
+  const [role, setRole] = useState('Buyer');
   const roles = ['Buyer', 'Artisan'];
 
-  // Google Auth
+  // Generate redirect URI dynamically
+  const redirectUri = makeRedirectUri({
+    preferLocalhost: true,  // Use 127.0.0.1 for Expo Go to avoid dynamic IP issues
+    // scheme: 'artizana',  // Uncomment for dev/standalone builds (after switching from Expo Go)
+    // path: 'auth',  // Optional: Add a path for specificity (e.g., artizana://auth)
+  });
+  console.log('Generated Redirect URI:', redirectUri);  // Log to verify and register in Google Console
+
+  // Google Auth request with platform-specific clients and scopes
   const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: 'YOUR_EXPO_CLIENT_ID.apps.googleusercontent.com',
-    iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com',
-    androidClientId: 'YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com',
-    webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+    expoClientId: '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com',
+    iosClientId: '920666001666-6kptki6lkjfkcnmr6nd1hig17sosbmpk.apps.googleusercontent.com',
+    androidClientId: '920666001666-hov9e5t2a5tnncs5de0m3d6f91e1qa52.apps.googleusercontent.com',
+    webClientId: '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com',
+    redirectUri,  // Use the dynamic URI
+    scopes: ['profile', 'email'],  // Add scopes for name/email access
   });
 
+  // Handle Google OAuth response
   useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response;
       handleGoogleLogin(authentication.accessToken);
+    } else if (response?.type === 'error') {
+      console.error('Auth Error:', response.error);
+      Alert.alert('Error', 'Authentication failed. Check redirect URI in Google Console.');
     }
   }, [response]);
 
   const handleGoogleLogin = async (accessToken) => {
     try {
-      // Send token to backend for validation & JWT creation
       const res = await axios.post(`${API_BASE_URL}/auth/google-mobile`, { accessToken });
       const { token, name: backendName, email: backendEmail, role: backendRole } = res.data;
 
@@ -46,53 +59,19 @@ export default function SignUp() {
       setEmail(backendEmail);
       if (backendRole) setRole(backendRole);
 
-      Alert.alert('Success', 'Google login successful! Complete your profile.');
-      // Optionally navigate to CompleteProfile or dashboard if role exists
+      Alert.alert('Success', 'Google login successful!');
+
+      // Navigate based on role or complete profile (aligns with acceptance criteria)
+      if (backendRole) {
+        if (backendRole === 'Buyer') navigation.replace('BuyerDashboard', { token });
+        else navigation.replace('ArtisanDashboard', { token });
+      } else {
+        // For new users: Navigate to complete profile (role selection/photo upload here)
+        navigation.replace('CompleteProfile', { token, name: backendName, email: backendEmail });
+      }
     } catch (err) {
-      console.log('Google Login Error:', err.response?.data || err.message);
+      console.error('Google Login Error:', err.response?.data || err.message);
       Alert.alert('Error', 'Google login failed');
-    }
-  };
-
-  const handleSignUp = async () => {
-    if (!name || !email || (!password && role !== 'Google') || !confirmPassword || !role) {
-      setError('All fields are required.');
-      Alert.alert('Error', 'All fields are required.');
-      return;
-    }
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setError('Invalid email format.');
-      Alert.alert('Error', 'Invalid email format.');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      Alert.alert('Error', 'Passwords do not match.');
-      return;
-    }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
-      Alert.alert('Error', 'Password must be at least 6 characters.');
-      return;
-    }
-    setError('');
-
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/auth/register`,
-        { name, email, password, role },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          timeout: 10000,
-        }
-      );
-      Alert.alert('Success', 'Account created! Role-based access applied.');
-      console.log('Response:', response.data);
-    } catch (err) {
-      console.log('Signup Error Details:', err);
-      const errMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Sign-up failed.';
-      setError(errMsg);
-      Alert.alert('Error', errMsg);
     }
   };
 
@@ -100,8 +79,8 @@ export default function SignUp() {
     <View style={styles.container}>
       <Text style={styles.title}>Artizana</Text>
       <Text style={styles.subtitle}>Create your Account</Text>
-      <Text style={styles.description}>Join the Artizana community</Text>
 
+      {/* For new users, these fields can be hidden or shown post-auth in CompleteProfile screen */}
       <TextInput
         style={styles.input}
         placeholder="Name"
@@ -112,23 +91,7 @@ export default function SignUp() {
         style={styles.input}
         placeholder="Email"
         value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
+        editable={false}  // Google email is verified
       />
 
       <Text style={styles.label}>Select Role:</Text>
@@ -136,25 +99,18 @@ export default function SignUp() {
         <Picker
           selectedValue={role}
           style={styles.picker}
-          onValueChange={(itemValue) => setRole(itemValue)}
+          onValueChange={(item) => setRole(item)}
         >
-          {roles.map((r) => (
-            <Picker.Item key={r} label={r} value={r} />
-          ))}
+          {roles.map((r) => <Picker.Item key={r} label={r} value={r} />)}
         </Picker>
       </View>
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <Button title="Sign Up" color="#4CAF50" onPress={handleSignUp} />
-      <Text style={styles.or}>or</Text>
       <Button
         title="Continue with Google"
         color="#4285F4"
         disabled={!request}
-        onPress={() => promptAsync()}
+        onPress={() => promptAsync()}  // Remove useProxy (deprecated)
       />
-      <Text style={styles.ngo}>Apply as an NGO</Text>
     </View>
   );
 }
@@ -162,13 +118,9 @@ export default function SignUp() {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: 20, alignItems: 'center' },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  subtitle: { fontSize: 18, color: '#757575', marginBottom: 5 },
-  description: { fontSize: 14, color: '#757575', marginBottom: 20 },
+  subtitle: { fontSize: 18, color: '#757575', marginBottom: 20 },
   input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10, borderRadius: 5, width: '100%' },
   label: { fontSize: 16, marginBottom: 5, alignSelf: 'flex-start' },
   pickerContainer: { borderWidth: 1, borderColor: '#ccc', marginBottom: 10, borderRadius: 5, width: '100%' },
   picker: { height: 50 },
-  error: { color: 'red', marginBottom: 10 },
-  or: { marginVertical: 10, color: '#757575' },
-  ngo: { color: '#4CAF50', marginTop: 10 },
 });
