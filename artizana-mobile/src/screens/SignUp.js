@@ -1,23 +1,24 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 
 import Constants from 'expo-constants';
 
-
 // Dynamically load API base URL from Expo config
 const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5000/api';
 
 export default function SignUp() {
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); 
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('Buyer'); // Default to Buyer 
   const [error, setError] = useState('');
 
-  const roles = ['Buyer', 'Artisan']; 
+  const roles = ['Buyer', 'Artisan'];
 
   const handleSignUp = async () => {
     if (!name || !email || !password || !confirmPassword || !role) {
@@ -56,7 +57,11 @@ export default function SignUp() {
       // TODO: Save token to AsyncStorage, navigate to profile edit page based on role
     } catch (err) {
       console.log('Signup Error Details:', err);
-      const errMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Sign-up failed.';
+      const errMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        'Sign-up failed.';
       setError(errMsg);
       Alert.alert('Error', errMsg);
     }
@@ -120,6 +125,14 @@ export default function SignUp() {
       <Text style={styles.or}>or</Text>
       <Button title="Continue with Google" color="#4285F4" onPress={handleGoogleSignIn} />
       <Text style={styles.ngo}>Apply as an NGO</Text>
+
+      {/* link to Login screen for existing users */}
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginLink}>
+          Already have an account?
+          <Text style={styles.loginLinkBold}> Log in</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -136,4 +149,14 @@ const styles = StyleSheet.create({
   error: { color: 'red', marginBottom: 10 },
   or: { marginVertical: 10, color: '#757575' },
   ngo: { color: '#4CAF50', marginTop: 10 },
+  loginLink: {
+    marginTop: 16,
+    fontSize: 14,
+    color: '#4B5563',
+    textAlign: 'center',
+  },
+  loginLinkBold: {
+    color: '#22C55E',
+    fontWeight: '600',
+  },
 });
