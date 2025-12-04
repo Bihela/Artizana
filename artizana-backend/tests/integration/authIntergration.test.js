@@ -15,8 +15,9 @@ jest.mock('../../src/models/User', () => {
   return User;
 });
 
-// AFTER mock is defined, set findOne to return null
-require('../../src/models/User').findOne.mockResolvedValue(null);
+// AFTER mock is defined, set findOne to return null BY DEFAULT
+const UserModel = require('../../src/models/User');
+UserModel.findOne.mockResolvedValue(null);
 
 // MOCK CASBIN
 jest.mock('../../src/config/casbin', () => ({
@@ -51,6 +52,37 @@ describe('Auth Integration', () => {
     expect(response.body).toEqual({
       message: 'Registration successful',
       token: 'mock-jwt-token'
+    });
+  }, 10000);
+
+  // KAN-5: login integration test
+  test('POST /api/auth/login authenticates user', async () => {
+    // For this test, we want findOne to return a real-ish user object
+    UserModel.findOne.mockResolvedValue({
+      _id: 'mockId',
+      name: 'Login User',
+      email: 'login@example.com',
+      role: 'Buyer',
+      comparePassword: jest.fn().mockResolvedValue(true), // password matches
+    });
+
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'login@example.com',
+        password: 'password123',
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      message: 'Login successful',
+      token: 'mock-jwt-token',
+      user: {
+        id: 'mockId',
+        name: 'Login User',
+        email: 'login@example.com',
+        role: 'Buyer',
+      },
     });
   }, 10000);
 });

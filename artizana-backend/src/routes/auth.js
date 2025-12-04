@@ -31,7 +31,11 @@ const registerHandler = async (req, res) => {
     const canRegister = await enforcer.enforce(role, '/register', 'create');
     if (!canRegister) return res.status(403).json({ error: 'Role registration denied' });
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     res.status(201).json({ message: 'Registration successful', token });
   } catch (err) {
@@ -39,8 +43,62 @@ const registerHandler = async (req, res) => {
   }
 };
 
-// Attach to route
+/**
+ * KAN-5: Login Handler — email/password auth for existing users
+ * Reuses the same User model, bcrypt hashing, and JWT strategy.
+ * Exported for unit tests just like registerHandler.
+ */
+const loginHandler = async (req, res) => {
+  const { email, password } = req.body;
+
+  // Basic validation
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      // Do not reveal whether email or password is wrong
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Compare password using model method
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Generate JWT consistent with registerHandler
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Return token + basic user info (useful for frontend role-based redirect)
+    return res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Attach to routes
 router.post('/register', registerHandler);
 
-// EXPORT BOTH — Frontend uses /api/auth/register → Tests use registerHandler
-module.exports = { router, registerHandler };
+// KAN-5 route for existing user login
+router.post('/login', loginHandler);
+
+// EXPORT BOTH — Frontend uses /api/auth/* → Tests can import handlers directly
+module.exports = { router, registerHandler, loginHandler };
