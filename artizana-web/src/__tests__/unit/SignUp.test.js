@@ -5,9 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SignUp from '../../pages/SignUp';
 
+// important: mock both useNavigate and Link
 jest.mock('react-router-dom', () => ({
   useNavigate: jest.fn(),
+  Link: ({ children, ...props }) => <a {...props}>{children}</a>,
 }));
+
 jest.mock('axios');
 
 describe('SignUp Component', () => {
@@ -47,7 +50,7 @@ describe('SignUp Component', () => {
           name: 'Test User',
           email: 'test@example.com',
           password: 'password123',
-          role: 'Buyer'
+          role: 'Buyer',
         })
       );
     });

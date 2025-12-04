@@ -1,6 +1,7 @@
+// src/pages/SignUp.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Dynamically load API base URL from .env
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
@@ -10,32 +11,37 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('Buyer'); 
+  const [role, setRole] = useState('Buyer');
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const roles = ['Buyer', 'Artisan']; 
+  const roles = ['Buyer', 'Artisan'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!name || !email || !password || !confirmPassword || !role || !agreeTerms) {
       setError('All fields and agreement to Terms & Conditions are required');
       return;
     }
+
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       setError('Invalid email format');
       return;
     }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
+
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
       return;
     }
+
     setError('');
     setLoading(true);
 
@@ -46,8 +52,10 @@ const SignUp = () => {
         password,
         role,
       });
+
       const { token } = response.data;
       localStorage.setItem('token', token);
+
       switch (role) {
         case 'Buyer':
           navigate('/buyer-dashboard');
@@ -62,13 +70,16 @@ const SignUp = () => {
           setError('Invalid role');
       }
     } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.message || 'Registration failed');
+      setError(
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        'Registration failed'
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Placeholder for Google sign-in
   const handleGoogleSignIn = () => {
     alert('Google sign-in functionality to be implemented');
   };
@@ -77,7 +88,9 @@ const SignUp = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm text-center">
         <h1 className="text-2xl font-bold mb-4">Artizana</h1>
-        <p className="text-sm text-gray-600 mb-6">Join Artizana to discover unique handmade crafts.</p>
+        <p className="text-sm text-gray-600 mb-6">
+          Join Artizana to discover unique handmade crafts.
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -137,6 +150,7 @@ const SignUp = () => {
           </label>
 
           {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
           <button
             type="submit"
             className="w-full bg-green-500 text-white p-2 rounded-full hover:bg-green-600 disabled:bg-gray-400"
@@ -153,7 +167,16 @@ const SignUp = () => {
         >
           Continue with Google
         </button>
+
         <p className="text-sm text-gray-600 mt-4">Apply as an NGO</p>
+
+        {/* KAN-5: link to login for existing users */}
+        <p className="text-sm text-gray-600 mt-4">
+          Already have an account?{' '}
+          <Link to="/login" className="text-green-500 font-semibold">
+            Log in
+          </Link>
+        </p>
       </div>
     </div>
   );
