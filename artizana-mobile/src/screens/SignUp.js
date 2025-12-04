@@ -61,12 +61,12 @@ export default function SignUp() {
 
       Alert.alert('Success', 'Google login successful!');
 
-      // Navigate based on role or complete profile (aligns with acceptance criteria)
+      // Navigate: dashboards are a future ticket — send to ProfileEdit or CompleteProfile
       if (backendRole) {
-        if (backendRole === 'Buyer') navigation.replace('BuyerDashboard', { token });
-        else navigation.replace('ArtisanDashboard', { token });
+        // Users with a role go to ProfileEdit for now
+        navigation.replace('ProfileEdit', { token });
       } else {
-        // For new users: Navigate to complete profile (role selection/photo upload here)
+        // New users complete role selection first
         navigation.replace('CompleteProfile', { token, name: backendName, email: backendEmail });
       }
     } catch (err) {
