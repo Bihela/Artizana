@@ -6,7 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
-import { makeRedirectUri } from 'expo-auth-session';  // Import this
+import { makeRedirectUri, useAutoDiscovery } from 'expo-auth-session';
 import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
 
@@ -21,25 +21,46 @@ export default function SignUp() {
   const [role, setRole] = useState('Buyer');
   const roles = ['Buyer', 'Artisan'];
 
-  // Generate redirect URI dynamically
-  const redirectUri = makeRedirectUri({
-    preferLocalhost: true,  // Use 127.0.0.1 for Expo Go to avoid dynamic IP issues
-    // scheme: 'artizana',  // Uncomment for dev/standalone builds (after switching from Expo Go)
-    // path: 'auth',  // Optional: Add a path for specificity (e.g., artizana://auth)
-  });
-  console.log('Generated Redirect URI:', redirectUri);  // Log to verify and register in Google Console
+  // Use the app scheme from config (set in `app.json`) to produce a stable
+  // native redirect URI for development builds. This avoids hardcoding any
+  // Expo username and works when using a development build or standalone app.
+  const scheme = Constants?.expoConfig?.scheme || 'artizana-dev';
+  const redirectUriNative = makeRedirectUri({ scheme, path: 'callback' });
+  const redirectUriLocal = makeRedirectUri({ preferLocalhost: true });
+  console.log('Generated Redirect URI (native):', redirectUriNative);
+  console.log('Generated Redirect URI (local):', redirectUriLocal);
 
-  // Google Auth request with platform-specific clients and scopes
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com',
-    iosClientId: '920666001666-6kptki6lkjfkcnmr6nd1hig17sosbmpk.apps.googleusercontent.com',
-    androidClientId: '920666001666-hov9e5t2a5tnncs5de0m3d6f91e1qa52.apps.googleusercontent.com',
-    webClientId: '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com',
-    redirectUri,  // Use the dynamic URI
-    scopes: ['profile', 'email'],  // Add scopes for name/email access
-  });
+  // Google OAuth setup. For development with a native dev build:
+  // - Use the Web client ID (legacy approach during dev testing)
+  // - Production builds should migrate to Android client with proper setup
+  const {
+    googleAndroidClientId,
+    googleWebClientId,
+  } = Constants?.expoConfig?.extra || {};
 
-  // Handle Google OAuth response
+  console.log('Android Client ID loaded:', googleAndroidClientId);
+  console.log('Web Client ID loaded:', googleWebClientId);
+
+  // For now, prefer Web client ID for dev testing since custom URI schemes
+  // are deprecated. In production, migrate to Android client ID.
+  const discovery = {
+    authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+    tokenEndpoint: 'https://oauth2.googleapis.com/token',
+    revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
+  };
+  
+  const [request, response, promptAsync] = Google.useAuthRequest(
+    {
+      // Android requires androidClientId; use the Web client ID as fallback
+      androidClientId: googleAndroidClientId || googleWebClientId || '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com',
+      webClientId: googleWebClientId || '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com',
+      redirectUrl: redirectUriNative,
+      scopes: ['profile', 'email'],
+    },
+    discovery
+  );
+
+  console.log('Auth request initialized:', !!request);
   useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response;
@@ -109,7 +130,7 @@ export default function SignUp() {
         title="Continue with Google"
         color="#4285F4"
         disabled={!request}
-        onPress={() => promptAsync()}  // Remove useProxy (deprecated)
+        onPress={() => promptAsync({ useProxy: false })}
       />
     </View>
   );
