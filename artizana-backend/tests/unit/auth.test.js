@@ -1,5 +1,5 @@
 // tests/unit/auth.test.js
-const { registerHandler } = require('../../src/routes/auth');
+const { registerHandler, loginHandler } = require('../../src/routes/auth');
 const User = require('../../src/models/User');
 const jwt = require('jsonwebtoken');
 const { initCasbin } = require('../../src/config/casbin');
@@ -8,7 +8,7 @@ jest.mock('../../src/models/User');
 jest.mock('jsonwebtoken');
 jest.mock('../../src/config/casbin');
 
-describe('Auth Controller - Unit', () => {
+describe('Auth Controller - Unit - Register', () => {
   let req, res;
 
   beforeEach(() => {
@@ -33,6 +33,45 @@ describe('Auth Controller - Unit', () => {
     expect(res.json).toHaveBeenCalledWith({
       message: 'Registration successful',
       token: 'mock-token'
+    });
+  });
+});
+
+describe('Auth Controller - Unit - Login', () => {
+  let req, res;
+
+  beforeEach(() => {
+    req = {
+      body: { email: 'login@example.com', password: 'password123' }
+    };
+    res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    // For login we want findOne to return a user with comparePassword method
+    User.findOne.mockResolvedValue({
+      _id: 'mockId',
+      name: 'Login User',
+      email: 'login@example.com',
+      role: 'Buyer',
+      comparePassword: jest.fn().mockResolvedValue(true),
+    });
+
+    jwt.sign.mockReturnValue('mock-token');
+  });
+
+  test('logs in an existing user successfully', async () => {
+    await loginHandler(req, res);
+
+    expect(User.findOne).toHaveBeenCalledWith({ email: 'login@example.com' });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Login successful',
+      token: 'mock-token',
+      user: {
+        id: 'mockId',
+        name: 'Login User',
+        email: 'login@example.com',
+        role: 'Buyer',
+      },
     });
   });
 });
