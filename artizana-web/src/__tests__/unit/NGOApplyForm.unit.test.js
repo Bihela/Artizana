@@ -18,6 +18,7 @@ describe('NGOApplyForm - Unit Tests', () => {
     mockNavigate = jest.fn();
     useNavigate.mockReturnValue(mockNavigate);
     axios.post.mockReset();
+    global.URL.createObjectURL = jest.fn(() => 'blob:http://localhost/12345');
   });
 
   test('renders all form fields', () => {
