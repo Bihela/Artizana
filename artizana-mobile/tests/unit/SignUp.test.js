@@ -26,7 +26,7 @@ describe('SignUp Component', () => {
     fireEvent.changeText(screen.getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.changeText(screen.getByPlaceholderText('Password'), 'password123');
     fireEvent.changeText(screen.getByPlaceholderText('Confirm Password'), 'password123');
-    fireEvent.changeText(screen.getByPlaceholderText('Name'), 'Test User');
+    fireEvent.changeText(screen.getByPlaceholderText('Full Name'), 'Test User');
 
     fireEvent.press(screen.getByText('Sign Up'));
 
@@ -38,9 +38,7 @@ describe('SignUp Component', () => {
           name: 'Test User',
           password: 'password123',
           role: 'Buyer',
-        }),
-        // handles config argument (headers, timeout, etc.)
-        expect.any(Object)
+        })
       );
     });
   });

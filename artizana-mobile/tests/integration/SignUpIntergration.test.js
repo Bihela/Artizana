@@ -12,7 +12,6 @@ jest.mock('@react-navigation/native', () => ({
   }),
 }));
 
-// Mock axios
 jest.mock('axios');
 
 describe('SignUp Integration', () => {
@@ -28,7 +27,7 @@ describe('SignUp Integration', () => {
     fireEvent.changeText(screen.getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.changeText(screen.getByPlaceholderText('Password'), 'password123');
     fireEvent.changeText(screen.getByPlaceholderText('Confirm Password'), 'password123');
-    fireEvent.changeText(screen.getByPlaceholderText('Name'), 'Test User');
+    fireEvent.changeText(screen.getByPlaceholderText('Full Name'), 'Test User');
 
     fireEvent.press(screen.getByText('Sign Up'));
 
@@ -41,26 +40,27 @@ describe('SignUp Integration', () => {
           email: 'test@example.com',
           password: 'password123',
           role: expect.any(String),
-        }),
-        expect.any(Object)
+        })
       );
     });
   });
 
   it('shows error message when signup fails', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Signup failed'));
+    axios.post.mockRejectedValueOnce({
+      response: { data: { message: 'Email already exists' } },
+    });
 
     render(<SignUp />);
 
     fireEvent.changeText(screen.getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.changeText(screen.getByPlaceholderText('Password'), 'password123');
     fireEvent.changeText(screen.getByPlaceholderText('Confirm Password'), 'password123');
-    fireEvent.changeText(screen.getByPlaceholderText('Name'), 'Test User');
+    fireEvent.changeText(screen.getByPlaceholderText('Full Name'), 'Test User');
 
     fireEvent.press(screen.getByText('Sign Up'));
 
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledTimes(1);
+      expect(screen.getByText(/already exists|failed|error/i)).toBeTruthy();
     });
 
     // optional assertion if you later render an error text in SignUp

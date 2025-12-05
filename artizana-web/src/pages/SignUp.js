@@ -167,8 +167,13 @@ const SignUp = () => {
         >
           Continue with Google
         </button>
-
-        <p className="text-sm text-gray-600 mt-4">Apply as an NGO</p>
+        <button
+          type="button"
+          onClick={() => navigate('/ngoapply')}
+          className="text-sm text-green-600 hover:text-green-700 font-medium mt-6 block mx-auto"
+        >
+          Apply as an NGO/Edu Partner →
+        </button>
 
         {/* KAN-5: link to login for existing users */}
         <p className="text-sm text-gray-600 mt-4">
