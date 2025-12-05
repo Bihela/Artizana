@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
-const API = process.env.REACT_APP_API_BASE_URL;
+const API = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
 
 const CompleteProfile = () => {
   const [role, setRole] = useState('Buyer');
@@ -36,8 +36,9 @@ const CompleteProfile = () => {
       if (res.data.token) localStorage.setItem('token', res.data.token);
 
       // Redirect based on role
-      if (role === 'Artisan') navigate('/profile/edit');
-      else /* Buyer */ navigate('/profile/edit');
+      if (role === 'Artisan') navigate('/artisan-dashboard');
+      else if (role === 'Buyer') navigate('/buyer-dashboard');
+      else navigate('/ngo-dashboard');
     } catch (err) {
       alert('Failed to save role: ' + (err.response?.data?.error || err.message));
     } finally {
@@ -59,7 +60,8 @@ const CompleteProfile = () => {
             required
           >
             <option value="Buyer">Buyer</option>
-            <option value="Artisan">Artisan</option>
+            <option value="Artisan">Artisan (Sell Crafts)</option>
+            <option value="NGO/Edu Partner">NGO / Educational Partner</option>
           </select>
 
           <button
