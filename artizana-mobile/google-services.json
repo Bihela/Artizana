@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "920666001666",
+    "project_id": "artizana-web-project",
+    "storage_bucket": "artizana-web-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920666001666:android:7671f060a393273be4321b",
+        "android_client_info": {
+          "package_name": "com.artizana.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmoLAQWQliWl27Dzg9UxqMSVA_OCaeBUs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "920666001666-6kptki6lkjfkcnmr6nd1hig17sosbmpk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.aadhil.artizana"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

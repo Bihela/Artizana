@@ -4,13 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
-import { makeRedirectUri, useAutoDiscovery } from 'expo-auth-session';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
-
-WebBrowser.maybeCompleteAuthSession();
 
 const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://192.168.0.198:5001/api';
 
@@ -21,58 +17,57 @@ export default function SignUp() {
   const [role, setRole] = useState('Buyer');
   const roles = ['Buyer', 'Artisan'];
 
-  // Use the app scheme from config (set in `app.json`) to produce a stable
-  // native redirect URI for development builds. This avoids hardcoding any
-  // Expo username and works when using a development build or standalone app.
-  const scheme = Constants?.expoConfig?.scheme || 'artizana-dev';
-  const redirectUriNative = makeRedirectUri({ scheme, path: 'callback' });
-  const redirectUriLocal = makeRedirectUri({ preferLocalhost: true });
-  console.log('Generated Redirect URI (native):', redirectUriNative);
-  console.log('Generated Redirect URI (local):', redirectUriLocal);
-
-  // Google OAuth setup. For development with a native dev build:
-  // - Use the Web client ID (legacy approach during dev testing)
-  // - Production builds should migrate to Android client with proper setup
   const {
-    googleAndroidClientId,
     googleWebClientId,
   } = Constants?.expoConfig?.extra || {};
 
-  console.log('Android Client ID loaded:', googleAndroidClientId);
-  console.log('Web Client ID loaded:', googleWebClientId);
+  // Use the Web Client ID from your Google Cloud Console "Web" credential.
+  // This is required even for native Android apps to get the idToken/accessToken correctly.
+  const webClientId = googleWebClientId || '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com';
 
-  // For now, prefer Web client ID for dev testing since custom URI schemes
-  // are deprecated. In production, migrate to Android client ID.
-  const discovery = {
-    authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
-    tokenEndpoint: 'https://oauth2.googleapis.com/token',
-    revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
-  };
-  
-  const [request, response, promptAsync] = Google.useAuthRequest(
-    {
-      // Android requires androidClientId; use the Web client ID as fallback
-      androidClientId: googleAndroidClientId || googleWebClientId || '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com',
-      webClientId: googleWebClientId || '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com',
-      redirectUrl: redirectUriNative,
-      scopes: ['profile', 'email'],
-    },
-    discovery
-  );
-
-  console.log('Auth request initialized:', !!request);
   useEffect(() => {
-    if (response?.type === 'success') {
-      const { authentication } = response;
-      handleGoogleLogin(authentication.accessToken);
-    } else if (response?.type === 'error') {
-      console.error('Auth Error:', response.error);
-      Alert.alert('Error', 'Authentication failed. Check redirect URI in Google Console.');
+    GoogleSignin.configure({
+      webClientId: webClientId,
+      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+      // forceCodeForRefreshToken: true, // [Android] related to offlineAccess
+      // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+    });
+  }, []);
+
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log('Google Sign-In Success:', userInfo);
+
+      // The new library version returns a slightly different structure sometimes
+      // Access token is usually in userInfo.data.tokens.accessToken or similar if scopes requested
+      // But usually for verification we use idToken. 
+      // Current backend uses `accessToken` to call Google UserInfo API.
+      // We need to retrieve the tokens.
+
+      const tokens = await GoogleSignin.getTokens();
+      console.log('Google Tokens:', tokens);
+
+      handleGoogleLogin(tokens.accessToken);
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('User cancelled the login flow');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('Sign in is in progress already');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('Play services not available or outdated');
+        Alert.alert('Error', 'Google Play Services not available');
+      } else {
+        console.error('Some other error happened during Google Sign-In:', error);
+        Alert.alert('Error', 'Google Sign-In failed');
+      }
     }
-  }, [response]);
+  };
 
   const handleGoogleLogin = async (accessToken) => {
     try {
+      console.log('Sending Access Token to Backend:', accessToken);
       const res = await axios.post(`${API_BASE_URL}/auth/google-mobile`, { accessToken });
       const { token, name: backendName, email: backendEmail, role: backendRole } = res.data;
 
@@ -82,12 +77,9 @@ export default function SignUp() {
 
       Alert.alert('Success', 'Google login successful!');
 
-      // Navigate: dashboards are a future ticket — send to ProfileEdit or CompleteProfile
       if (backendRole) {
-        // Users with a role go to ProfileEdit for now
         navigation.replace('ProfileEdit', { token });
       } else {
-        // New users complete role selection first
         navigation.replace('CompleteProfile', { token, name: backendName, email: backendEmail });
       }
     } catch (err) {
@@ -101,7 +93,6 @@ export default function SignUp() {
       <Text style={styles.title}>Artizana</Text>
       <Text style={styles.subtitle}>Create your Account</Text>
 
-      {/* For new users, these fields can be hidden or shown post-auth in CompleteProfile screen */}
       <TextInput
         style={styles.input}
         placeholder="Name"
@@ -112,7 +103,7 @@ export default function SignUp() {
         style={styles.input}
         placeholder="Email"
         value={email}
-        editable={false}  // Google email is verified
+        editable={false}
       />
 
       <Text style={styles.label}>Select Role:</Text>
@@ -129,8 +120,7 @@ export default function SignUp() {
       <Button
         title="Continue with Google"
         color="#4285F4"
-        disabled={!request}
-        onPress={() => promptAsync({ useProxy: false })}
+        onPress={signIn}
       />
     </View>
   );
