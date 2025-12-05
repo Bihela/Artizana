@@ -1,90 +1,62 @@
-
-// src/screens/SignUp.js
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import Constants from 'expo-constants';
-import { useNavigation } from '@react-navigation/native';
 
-const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://192.168.0.198:5001/api';
+// Dynamically load API base URL from Expo config
+const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5000/api';
 
 export default function SignUp() {
-  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState('Buyer');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('Buyer'); // Default to Buyer 
+  const [error, setError] = useState('');
+
   const roles = ['Buyer', 'Artisan'];
 
-  const {
-    googleWebClientId,
-  } = Constants?.expoConfig?.extra || {};
-
-  // Use the Web Client ID from your Google Cloud Console "Web" credential.
-  // This is required even for native Android apps to get the idToken/accessToken correctly.
-  const webClientId = googleWebClientId || '920666001666-8ec2tr76jpgthvgl710eqinlv3vui9c6.apps.googleusercontent.com';
-
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: webClientId,
-      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
-      // forceCodeForRefreshToken: true, // [Android] related to offlineAccess
-      // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
-    });
-  }, []);
-
-  const signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      console.log('Google Sign-In Success:', userInfo);
-
-      // The new library version returns a slightly different structure sometimes
-      // Access token is usually in userInfo.data.tokens.accessToken or similar if scopes requested
-      // But usually for verification we use idToken. 
-      // Current backend uses `accessToken` to call Google UserInfo API.
-      // We need to retrieve the tokens.
-
-      const tokens = await GoogleSignin.getTokens();
-      console.log('Google Tokens:', tokens);
-
-      handleGoogleLogin(tokens.accessToken);
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('User cancelled the login flow');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('Sign in is in progress already');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('Play services not available or outdated');
-        Alert.alert('Error', 'Google Play Services not available');
-      } else {
-        console.error('Some other error happened during Google Sign-In:', error);
-        Alert.alert('Error', 'Google Sign-In failed');
-      }
+  const handleSignUp = async () => {
+    if (!name || !email || !password || !confirmPassword || !role) {
+      setError('All fields are required.');
+      Alert.alert('Error', 'All fields are required.');
+      return;
     }
-  };
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError('Invalid email format.');
+      Alert.alert('Error', 'Invalid email format.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      Alert.alert('Error', 'Password must be at least 6 characters.');
+      return;
+    }
+    setError('');
 
-  const handleGoogleLogin = async (accessToken) => {
     try {
-      console.log('Sending Access Token to Backend:', accessToken);
-      const res = await axios.post(`${API_BASE_URL}/auth/google-mobile`, { accessToken });
-      const { token, name: backendName, email: backendEmail, role: backendRole } = res.data;
-
-      setName(backendName);
-      setEmail(backendEmail);
-      if (backendRole) setRole(backendRole);
-
-      Alert.alert('Success', 'Google login successful!');
-
-      if (backendRole) {
-        navigation.replace('ProfileEdit', { token });
-      } else {
-        navigation.replace('CompleteProfile', { token, name: backendName, email: backendEmail });
-      }
+      const response = await axios.post(
+        `${API_BASE_URL}/auth/register`,
+        { name, email, password, role },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 10000,
+        }
+      );
+      Alert.alert('Success', 'Account created! Role-based access applied.');
+      console.log('Response:', response.data);
+      // TODO: Save token to AsyncStorage, navigate to profile edit page based on role
     } catch (err) {
-      console.error('Google Login Error:', err.response?.data || err.message);
-      Alert.alert('Error', 'Google login failed');
+      console.log('Signup Error Details:', err);
+      const errMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Sign-up failed.';
+      setError(errMsg);
+      Alert.alert('Error', errMsg);
     }
   };
 
@@ -92,36 +64,57 @@ export default function SignUp() {
     <View style={styles.container}>
       <Text style={styles.title}>Artizana</Text>
       <Text style={styles.subtitle}>Create your Account</Text>
+      <Text style={styles.description}>Join the Artizana community</Text>
 
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
       <TextInput
         style={styles.input}
         placeholder="Name"
         value={name}
         onChangeText={setName}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        editable={false}
-      />
 
       <Text style={styles.label}>Select Role:</Text>
       <View style={styles.pickerContainer}>
         <Picker
+          testID="picker"
           selectedValue={role}
           style={styles.picker}
-          onValueChange={(item) => setRole(item)}
+          onValueChange={(itemValue) => setRole(itemValue)}
         >
-          {roles.map((r) => <Picker.Item key={r} label={r} value={r} />)}
+          {roles.map((r) => (
+            <Picker.Item key={r} label={r} value={r} />
+          ))}
         </Picker>
       </View>
 
-      <Button
-        title="Continue with Google"
-        color="#4285F4"
-        onPress={signIn}
-      />
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
+      {/* Only the main Sign Up button remains */}
+      <Button title="Sign Up" color="#4CAF50" onPress={handleSignUp} />
+
+      <Text style={styles.ngo}>Apply as an NGO</Text>
     </View>
   );
 }
@@ -129,9 +122,12 @@ export default function SignUp() {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: 20, alignItems: 'center' },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  subtitle: { fontSize: 18, color: '#757575', marginBottom: 20 },
+  subtitle: { fontSize: 18, color: '#757575', marginBottom: 5 },
+  description: { fontSize: 14, color: '#757575', marginBottom: 20 },
   input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10, borderRadius: 5, width: '100%' },
   label: { fontSize: 16, marginBottom: 5, alignSelf: 'flex-start' },
   pickerContainer: { borderWidth: 1, borderColor: '#ccc', marginBottom: 10, borderRadius: 5, width: '100%' },
   picker: { height: 50 },
+  error: { color: 'red', marginBottom: 10 },
+  ngo: { color: '#4CAF50', marginTop: 20 },
 });

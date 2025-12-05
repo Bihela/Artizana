@@ -6,9 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "scheme": "artizana-dev",
-    "projectId": "95ed859a-b147-43f0-a7a0-b4fa060a2a9a",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -18,8 +16,6 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.artizana.mobile",
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -28,28 +24,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "@react-native-google-signin/google-signin",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "ndkVersion": "26.1.10909125"
-          }
-        }
-      ]
-    ],
+    "plugins": [],
     "extra": {
-      "apiBaseUrl": "http://192.168.8.101:5000/api",
-      "eas": {
-        "projectId": "95ed859a-b147-43f0-a7a0-b4fa060a2a9a"
-      }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/95ed859a-b147-43f0-a7a0-b4fa060a2a9a"
+      "apiBaseUrl": "http://192.168.8.101:5000/api"
     }
   }
 }

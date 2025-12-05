@@ -7,6 +7,87 @@ const User = require('../models/User');
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
+// ===== STANDARD AUTH =====
+router.post('/register', async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role
+    });
+
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
 // ===== WEB GOOGLE OAUTH =====
 router.get(
   '/google',
@@ -35,54 +116,6 @@ router.get(
   }
 );
 
-// ===== MOBILE GOOGLE LOGIN =====
-router.post('/google-mobile', async (req, res) => {
-  try {
-    const { accessToken } = req.body;
-    if (!accessToken) return res.status(400).json({ error: 'No access token provided' });
 
-    // Get user info from Google
-    const googleRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const profile = googleRes.data;
-
-    // Find or create user
-    let user = await User.findOne({ googleId: profile.sub });
-    if (!user) {
-      user = await User.findOne({ email: profile.email });
-      if (user) {
-        user.googleId = profile.sub;
-        await user.save();
-      }
-    }
-
-    if (!user) {
-      user = await User.create({
-        googleId: profile.sub,
-        name: profile.name,
-        email: profile.email,
-        role: null,
-      });
-    }
-
-    // Generate JWT
-    const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.json({
-      token,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    });
-  } catch (err) {
-    console.error('Mobile Google login error:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Google login failed' });
-  }
-});
 
 module.exports = { router };
