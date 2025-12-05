@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from 'react';
 import {
   View,
@@ -142,6 +143,14 @@ export default function SignUp({ navigation }) {
       >
         <Text style={styles.ngoText}>Apply as an NGO/Edu Partner →</Text>
       </TouchableOpacity>
+
+      {/* Link to Login screen for existing users */}
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginLink}>
+          Already have an account?
+          <Text style={styles.loginLinkBold}> Log in</Text>
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -239,11 +248,22 @@ const styles = StyleSheet.create({
   },
   ngoLink: {
     marginTop: 24,
+    marginBottom: 12,
   },
   ngoText: {
     color: '#10b981',
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  loginLink: {
+    marginTop: 16,
+    fontSize: 14,
+    color: '#4B5563',
+    textAlign: 'center',
+  },
+  loginLinkBold: {
+    color: '#22C55E',
+    fontWeight: '600',
   },
 });

@@ -1,7 +1,16 @@
+// tests/integration/SignUpIntergration.test.js
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react-native';
 import SignUp from '../../src/screens/SignUp';
 import axios from 'axios';
+
+// mock navigation so useNavigation works in tests
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: jest.fn(),
+    replace: jest.fn(),
+  }),
+}));
 
 jest.mock('axios');
 
@@ -53,5 +62,8 @@ describe('SignUp Integration', () => {
     await waitFor(() => {
       expect(screen.getByText(/already exists|failed|error/i)).toBeTruthy();
     });
+
+    // optional assertion if you later render an error text in SignUp
+    // expect(screen.getByText(/failed|error|invalid/i)).toBeTruthy();
   });
 });

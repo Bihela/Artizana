@@ -3,6 +3,14 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react-nativ
 import axios from 'axios';
 import SignUp from '../../src/screens/SignUp';
 
+// mock navigation so useNavigation does not explode
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: jest.fn(),
+    replace: jest.fn(),
+  }),
+}));
+
 jest.mock('axios');
 
 describe('SignUp Component', () => {
@@ -29,7 +37,7 @@ describe('SignUp Component', () => {
           email: 'test@example.com',
           name: 'Test User',
           password: 'password123',
-          role: 'Buyer', 
+          role: 'Buyer',
         })
       );
     });
