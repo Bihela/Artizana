@@ -1,10 +1,17 @@
-// tests/integration/SignUpIntegration.test.js
+// tests/integration/SignUpIntergration.test.js
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react-native';
 import SignUp from '../../src/screens/SignUp';
 import axios from 'axios';
 
-// Mock axios
+// mock navigation so useNavigation works in tests
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: jest.fn(),
+    replace: jest.fn(),
+  }),
+}));
+
 jest.mock('axios');
 
 describe('SignUp Integration', () => {
@@ -20,7 +27,7 @@ describe('SignUp Integration', () => {
     fireEvent.changeText(screen.getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.changeText(screen.getByPlaceholderText('Password'), 'password123');
     fireEvent.changeText(screen.getByPlaceholderText('Confirm Password'), 'password123');
-    fireEvent.changeText(screen.getByPlaceholderText('Name'), 'Test User');
+    fireEvent.changeText(screen.getByPlaceholderText('Full Name'), 'Test User');
 
     fireEvent.press(screen.getByText('Sign Up'));
 
@@ -32,30 +39,31 @@ describe('SignUp Integration', () => {
           name: 'Test User',
           email: 'test@example.com',
           password: 'password123',
-          role: expect.any(String)
-        }),
-        expect.any(Object)
+          role: expect.any(String),
+        })
       );
     });
   });
 
   it('shows error message when signup fails', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Signup failed'));
+    axios.post.mockRejectedValueOnce({
+      response: { data: { message: 'Email already exists' } },
+    });
 
     render(<SignUp />);
 
     fireEvent.changeText(screen.getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.changeText(screen.getByPlaceholderText('Password'), 'password123');
     fireEvent.changeText(screen.getByPlaceholderText('Confirm Password'), 'password123');
-    fireEvent.changeText(screen.getByPlaceholderText('Name'), 'Test User');
+    fireEvent.changeText(screen.getByPlaceholderText('Full Name'), 'Test User');
 
     fireEvent.press(screen.getByText('Sign Up'));
 
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledTimes(1);
+      expect(screen.getByText(/already exists|failed|error/i)).toBeTruthy();
     });
 
-    // can have a SignUp component displays an error message:
+    // optional assertion if you later render an error text in SignUp
     // expect(screen.getByText(/failed|error|invalid/i)).toBeTruthy();
   });
 });

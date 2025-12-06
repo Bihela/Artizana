@@ -1,7 +1,9 @@
-export default {
-  preset: 'jest-expo',
+// jest.config.js at artizana mobile root
+module.exports = {
+  preset: "jest-expo",
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?react-native|@react-native|@expo|expo(nent)?|@expo-google-fonts|@unimodules|unimodules|sentry-expo|native-base)',
+    "node_modules/(?!(jest-)?react-native|@react-native|react-native|@react-navigation|@react-native-async-storage/async-storage|expo(nent)?|expo-status-bar|@expo-google-fonts|@unimodules|unimodules|sentry-expo|native-base)",
   ],
-  testMatch: ['**/__tests__/**/*.test.js', '**/tests/**/*.test.js'],
+  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect"],
+  testMatch: ["**/__tests__/**/*.test.js", "**/tests/**/*.test.js"],
 };

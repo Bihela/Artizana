@@ -63,6 +63,8 @@ mongoose.connect(process.env.MONGO_URI)
 
 // ===== Routes =====
 app.use('/api/auth', authRouter);
+const ngoApplicationRoutes = require('./src/routes/ngoApplication');
+app.use('/api/ngo-applications', ngoApplicationRoutes);
 
 // ===== Health Check =====
 app.get('/', (req, res) => res.json({ message: 'Artizana Backend Running' }));
