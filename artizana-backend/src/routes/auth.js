@@ -133,6 +133,47 @@ router.get(
   }
 );
 
+// ===== UPDATE ROLE (For Google Auth First Time) =====
+router.put('/update-role', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const { role } = req.body;
+    if (!['Buyer', 'Artisan', 'NGO/Edu Partner'].includes(role)) {
+      return res.status(400).json({ error: 'Invalid role' });
+    }
+
+    user.role = role;
+    await user.save();
+
+    // Return new token with updated role
+    const newToken = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token: newToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    console.error('Update role error:', err);
+    res.status(500).json({ error: 'Failed to update role' });
+  }
+});
+
 // Attach to routes
 router.post('/register', registerHandler);
 router.post('/login', loginHandler);

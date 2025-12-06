@@ -90,8 +90,8 @@ const SignUp = () => {
           <label className="flex items-center space-x-3 cursor-pointer">
             <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="w-5 h-5 text-green-500 border-gray-300 rounded focus:ring-green-500" required />
             <span className="text-sm text-gray-700">
-              I agree to the <a href="#" className="text-green-600 hover:underline">Terms & Conditions</a> and{' '}
-              <a href="#" className="text-green-600 hover:underline">Privacy Policy</a>
+              I agree to the <Link to="/terms" className="text-green-600 hover:underline">Terms & Conditions</Link> and{' '}
+              <Link to="/privacy" className="text-green-600 hover:underline">Privacy Policy</Link>
             </span>
           </label>
 
@@ -108,6 +108,7 @@ const SignUp = () => {
             <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-gray-500">or continue with</span></div>
           </div>
 
+
           <button onClick={handleGoogleSignIn} className="mt-6 w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-3.5 rounded-lg transition shadow-sm">
             <svg className="w-6 h-6" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -116,6 +117,14 @@ const SignUp = () => {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
             Continue with Google
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/ngoapply')}
+            className="text-sm text-green-600 hover:text-green-700 font-medium mt-6 block mx-auto hover:underline"
+          >
+            Apply as an NGO/Edu Partner →
           </button>
         </div>
 
