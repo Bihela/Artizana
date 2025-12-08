@@ -12,15 +12,21 @@ describe('Auth Controller - Unit - Register', () => {
   let req, res;
 
   beforeEach(() => {
-    req = { 
+    req = {
       body: { name: 'Test', email: 'test@example.com', password: 'password123', role: 'Buyer' },
       ip: '127.0.0.1',
-      headers: { origin: 'http://localhost:3000' }  
+      headers: { origin: 'http://localhost:3000' }
     };
     res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
 
     User.findOne.mockResolvedValue(null);
-    User.prototype.save = jest.fn().mockResolvedValue({ _id: 'mockId', role: 'Buyer' });
+    User.create = jest.fn().mockResolvedValue({
+      _id: 'mockId',
+      name: 'Test',
+      email: 'test@example.com',
+      role: 'Buyer'
+    });
+    jest.spyOn(User.prototype, 'save').mockResolvedValue({ _id: 'mockId', role: 'Buyer' });
     jwt.sign.mockReturnValue('mock-token');
     initCasbin.mockResolvedValue({
       enforce: jest.fn().mockResolvedValue(true)
@@ -31,8 +37,13 @@ describe('Auth Controller - Unit - Register', () => {
     await registerHandler(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
-      message: 'Registration successful',
-      token: 'mock-token'
+      token: 'mock-token',
+      user: {
+        id: 'mockId',
+        name: 'Test',
+        email: 'test@example.com',
+        role: 'Buyer'
+      }
     });
   });
 });
