@@ -17,14 +17,15 @@ describe('SignUp Component', () => {
   let mockNavigate;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     mockNavigate = jest.fn();
     useNavigate.mockReturnValue(mockNavigate);
     axios.post.mockResolvedValue({ data: { token: 'mock-token' } });
-    jest.clearAllMocks();
   });
 
   test('renders form fields', () => {
     render(<SignUp />);
+
     expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Confirm Password')).toBeInTheDocument();
@@ -32,17 +33,39 @@ describe('SignUp Component', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
-  test('submits form with valid data', async () => {
+  test('submits form with valid data after selecting language', async () => {
     render(<SignUp />);
 
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByPlaceholderText('Confirm Password'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByPlaceholderText('Full Name'), { target: { value: 'Test User' } });
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Buyer' } });
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Password'), {
+      target: { value: 'password123' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Confirm Password'), {
+      target: { value: 'password123' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Full Name'), {
+      target: { value: 'Test User' },
+    });
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'Buyer' },
+    });
+
     fireEvent.click(screen.getByLabelText('I agree to the Terms & Conditions'));
+
+    // Click Sign Up (this should show the language modal first)
     fireEvent.click(screen.getByText('Sign Up'));
 
+    // Modal should appear
+    expect(
+      await screen.findByText(/Choose your language/i)
+    ).toBeInTheDocument();
+
+    // Select English in the popup
+    fireEvent.click(screen.getByText(/English/i));
+
+    // Now axios.post should be called
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
         expect.any(String),
@@ -53,6 +76,11 @@ describe('SignUp Component', () => {
           role: 'Buyer',
         })
       );
+    });
+
+    // And navigation should go to /home
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/home');
     });
   });
 });
