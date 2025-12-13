@@ -69,7 +69,7 @@ const loginHandler = async (req, res) => {
 
   try {
     // Find user by email
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
     if (!user) {
       // Do not reveal whether email or password is wrong
       return res.status(401).json({ error: 'Invalid email or password' });

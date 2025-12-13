@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 // Use same style as SignUp: API base from env + /api prefix
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:5001/api";
 
 function Login() {
   const navigate = useNavigate();
