@@ -4,9 +4,11 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet 
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import Constants from 'expo-constants';
 
 // Same pattern as web, just with Expo env support
 const API_BASE_URL =
+  Constants?.expoConfig?.extra?.apiBaseUrl ||
   process.env.EXPO_PUBLIC_API_BASE_URL ||
   process.env.REACT_APP_API_BASE_URL ||
   "http://localhost:5001/api";
@@ -30,7 +32,7 @@ const Login = () => {
       return;
     }
 
-     if (email === "test@example.com" && password === "password123") {
+    if (email === "test@example.com" && password === "password123") {
       // skip axios and just navigate
       navigation.replace("BuyerDashboard");
       return;
@@ -68,6 +70,7 @@ const Login = () => {
       const message =
         err.response?.data?.error ||
         err.response?.data?.message ||
+        err.message ||
         "Login failed. Check your credentials.";
       setError(message);
     } finally {
