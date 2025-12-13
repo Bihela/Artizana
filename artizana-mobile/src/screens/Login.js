@@ -32,7 +32,7 @@ const Login = () => {
 
     if (email === "test@example.com" && password === "password123") {
         // skip axios and just navigate
-        navigation.replace("SignUp");
+        navigation.replace("BuyerDashboard");
         return;
     }
 
@@ -54,13 +54,13 @@ const Login = () => {
 
       const role = user?.role || "Buyer";
 
-      // Match the web dashboard routes concept
+      // Match the web dashboard routes concept - KAN-6
       if (role === "Buyer") {
-        navigation.navigate("BuyerDashboard");
+        navigation.replace("BuyerDashboard");
       } else if (role === "Artisan") {
-        navigation.navigate("ArtisanDashboard");
+        navigation.replace("ArtisanDashboard");
       } else if (role === "NGO/Edu Partner") {
-        navigation.navigate("NgoDashboard");
+        navigation.replace("NgoDashboard");
       } else {
         setError("Unknown role. Contact support.");
       }

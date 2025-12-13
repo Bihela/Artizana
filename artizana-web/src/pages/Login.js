@@ -1,11 +1,14 @@
 // src/pages/Login.js
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Use same style as SignUp: API base from env + /api prefix
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("buyer@example.com");
   const [password, setPassword] = useState("Password123");
   const [error, setError] = useState("");
@@ -44,6 +47,14 @@ function Login() {
       localStorage.setItem("currentUser", JSON.stringify(data.user));
 
       setUser(data.user);
+
+      // KAN-6: redirect to role-specific dashboard AFTER successful login
+      const role = data.user?.role;
+
+      if (role === "Buyer") navigate("/buyer-dashboard", { replace: true });
+      else if (role === "Artisan") navigate("/artisan-dashboard", { replace: true });
+      else if (role === "NGO/Edu Partner") navigate("/ngo-dashboard", { replace: true });
+      else setError("Unknown role. Contact support.");
     } catch (err) {
       console.error("Login request failed", err);
       setError("Could not connect to server");
