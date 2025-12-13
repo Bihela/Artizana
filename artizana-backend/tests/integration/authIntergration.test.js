@@ -69,12 +69,15 @@ describe('Auth Integration', () => {
   // KAN-5: login integration test
   test('POST /api/auth/login authenticates user', async () => {
     // For this test, we want findOne to return a real-ish user object
-    UserModel.findOne.mockResolvedValue({
-      _id: 'mockId',
-      name: 'Login User',
-      email: 'login@example.com',
-      role: 'Buyer',
-      comparePassword: jest.fn().mockResolvedValue(true), // password matches
+    // support chaining .select('+password')
+    UserModel.findOne.mockReturnValue({
+      select: jest.fn().mockResolvedValue({
+        _id: 'mockId',
+        name: 'Login User',
+        email: 'login@example.com',
+        role: 'Buyer',
+        comparePassword: jest.fn().mockResolvedValue(true), // password matches
+      })
     });
 
     const response = await request(app)
