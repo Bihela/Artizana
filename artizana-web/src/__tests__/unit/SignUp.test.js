@@ -25,7 +25,7 @@ describe('SignUp Component', () => {
 
   test('renders form fields', () => {
     render(<SignUp />);
-    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Email Address')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Confirm Password')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Full Name')).toBeInTheDocument();
@@ -35,13 +35,13 @@ describe('SignUp Component', () => {
   test('submits form with valid data', async () => {
     render(<SignUp />);
 
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByPlaceholderText('Email Address'), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'password123' } });
     fireEvent.change(screen.getByPlaceholderText('Confirm Password'), { target: { value: 'password123' } });
     fireEvent.change(screen.getByPlaceholderText('Full Name'), { target: { value: 'Test User' } });
     fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Buyer' } });
-    fireEvent.click(screen.getByLabelText('I agree to the Terms & Conditions'));
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getByLabelText(/I agree to the Terms & Conditions/i));
+    fireEvent.click(screen.getByText('Sign Up with Email'));
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(

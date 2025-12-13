@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_BASE_URL ||
   process.env.REACT_APP_API_BASE_URL ||
-  "http://localhost:5000/api";
+  "http://localhost:5001/api";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -30,10 +30,10 @@ const Login = () => {
       return;
     }
 
-    if (email === "test@example.com" && password === "password123") {
-        // skip axios and just navigate
-        navigation.replace("BuyerDashboard");
-        return;
+     if (email === "test@example.com" && password === "password123") {
+      // skip axios and just navigate
+      navigation.replace("BuyerDashboard");
+      return;
     }
 
     setError("");

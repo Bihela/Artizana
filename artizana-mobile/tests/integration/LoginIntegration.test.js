@@ -56,7 +56,7 @@ describe("Login Integration", () => {
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
-        "http://localhost:5000/api/auth/login",
+        "http://localhost:5001/api/auth/login",
         {
           email: "buyer@example.com",
           password: "password123",

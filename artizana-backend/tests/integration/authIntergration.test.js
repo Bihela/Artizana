@@ -12,6 +12,12 @@ jest.mock('../../src/models/User', () => {
   const mockFindOne = jest.fn();
   const User = jest.fn().mockImplementation(() => mockUser);
   User.findOne = mockFindOne;
+  User.create = jest.fn().mockResolvedValue({
+    _id: 'mockId',
+    name: 'Test User',
+    email: 'test@example.com',
+    role: 'Buyer'
+  });
   return User;
 });
 
@@ -50,8 +56,13 @@ describe('Auth Integration', () => {
 
     expect(response.status).toBe(201);
     expect(response.body).toEqual({
-      message: 'Registration successful',
-      token: 'mock-jwt-token'
+      token: 'mock-jwt-token',
+      user: {
+        id: 'mockId',
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'Buyer'
+      }
     });
   }, 10000);
 
