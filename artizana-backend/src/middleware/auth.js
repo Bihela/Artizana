@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { initCasbin } = require('../config/casbin');
+const { initCasbin } = require('../config/casbin.js');
 
 module.exports = async (req, res, next) => {
   try {
@@ -10,9 +10,9 @@ module.exports = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;  // Includes id and role
+    req.user = decoded;  // includes id and role
 
-    // Enforce RBAC (e.g., check if role can access route)
+    // Casbin RBAC check
     const enforcer = await initCasbin();
     const canAccess = await enforcer.enforce(decoded.role, req.path, 'read');
     if (!canAccess) {

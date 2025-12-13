@@ -1,50 +1,61 @@
-// src/routes/auth.js
 const express = require('express');
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const { initCasbin } = require('../config/casbin');
+const passport = require('../config/passport');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
+const axios = require('axios');
+const User = require('../models/User');
 
-// Register Handler — Used in route AND exported for unit testing
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+// ===== STANDARD AUTH =====
+
+/**
+ * Register Handler
+ * Exported for unit tests
+ */
 const registerHandler = async (req, res) => {
-  console.log('Incoming request:', req.body, req.ip, req.headers.origin);
-  const { name, email, password, role } = req.body;
-
-  if (!name || !email || !password || !role) {
-    return res.status(400).json({ error: 'All fields are required' });
-  }
-  if (!['Buyer', 'Artisan', 'NGO/Edu Partner', 'Admin'].includes(role)) {
-    return res.status(400).json({ error: 'Invalid role' });
-  }
-  if (password.length < 6) {
-    return res.status(400).json({ error: 'Password must be at least 6 characters' });
-  }
-
   try {
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ error: 'Email already exists' });
+    const { name, email, password, role } = req.body;
 
-    user = new User({ name, email, password, role });
-    await user.save();
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
 
-    const enforcer = await initCasbin();
-    const canRegister = await enforcer.enforce(role, '/register', 'create');
-    if (!canRegister) return res.status(403).json({ error: 'Role registration denied' });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role
+    });
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    res.status(201).json({ message: 'Registration successful', token });
+    res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    console.error('Registration error:', err);
+    res.status(500).json({ error: 'Registration failed' });
   }
 };
 
 /**
- * KAN-5: Login Handler — email/password auth for existing users
+ * Login Handler — email/password auth for existing users
  * Reuses the same User model, bcrypt hashing, and JWT strategy.
  * Exported for unit tests just like registerHandler.
  */
@@ -72,7 +83,7 @@ const loginHandler = async (req, res) => {
 
     // Generate JWT consistent with registerHandler
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -94,10 +105,77 @@ const loginHandler = async (req, res) => {
   }
 };
 
+// ===== WEB GOOGLE OAUTH =====
+router.get(
+  '/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account',
+  })
+);
+
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: `${FRONTEND_URL}/login` }),
+  (req, res) => {
+    const token = jwt.sign(
+      { id: req.user._id, email: req.user.email, role: req.user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const redirectTo = req.user.role
+      ? `${FRONTEND_URL}/${req.user.role === 'Buyer' ? 'buyer-dashboard' : 'artisan-dashboard'}?token=${token}`
+      : `${FRONTEND_URL}/complete-profile?token=${token}`;
+
+    console.log('Redirecting Google user to:', redirectTo);
+    res.redirect(redirectTo);
+  }
+);
+
+// ===== UPDATE ROLE (For Google Auth First Time) =====
+router.put('/update-role', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const { role } = req.body;
+    if (!['Buyer', 'Artisan', 'NGO/Edu Partner'].includes(role)) {
+      return res.status(400).json({ error: 'Invalid role' });
+    }
+
+    user.role = role;
+    await user.save();
+
+    // Return new token with updated role
+    const newToken = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token: newToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    console.error('Update role error:', err);
+    res.status(500).json({ error: 'Failed to update role' });
+  }
+});
+
 // Attach to routes
 router.post('/register', registerHandler);
-
-// KAN-5 route for existing user login
 router.post('/login', loginHandler);
 
 // EXPORT BOTH — Frontend uses /api/auth/* → Tests can import handlers directly
