@@ -16,7 +16,7 @@ import axios from 'axios';
 import Constants from 'expo-constants'; // THIS IS THE KEY
 
 // Now correctly reads your .env file via app.config.js
-const API_URL = Constants.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5000/api';
+const API_URL = Constants.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5001/api';
 
 export default function NGOApplyScreen({ navigation }) {
   const [form, setForm] = useState({

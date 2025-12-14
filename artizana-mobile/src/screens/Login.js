@@ -4,9 +4,11 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet 
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import Constants from 'expo-constants';
 
 // Same pattern as web, just with Expo env support
 const API_BASE_URL =
+  Constants?.expoConfig?.extra?.apiBaseUrl ||
   process.env.EXPO_PUBLIC_API_BASE_URL ||
   process.env.REACT_APP_API_BASE_URL ||
   "http://localhost:5001/api";
@@ -32,7 +34,7 @@ const Login = () => {
 
     if (email === "test@example.com" && password === "password123") {
       // skip axios and just navigate
-      navigation.replace("SignUp");
+      navigation.replace("BuyerDashboard");
       return;
     }
 
@@ -54,13 +56,13 @@ const Login = () => {
 
       const role = user?.role || "Buyer";
 
-      // Match the web dashboard routes concept
+      // Match the web dashboard routes concept - KAN-6
       if (role === "Buyer") {
-        navigation.navigate("BuyerDashboard");
+        navigation.replace("BuyerDashboard");
       } else if (role === "Artisan") {
-        navigation.navigate("ArtisanDashboard");
+        navigation.replace("ArtisanDashboard");
       } else if (role === "NGO/Edu Partner") {
-        navigation.navigate("NgoDashboard");
+        navigation.replace("NgoDashboard");
       } else {
         setError("Unknown role. Contact support.");
       }
@@ -68,6 +70,7 @@ const Login = () => {
       const message =
         err.response?.data?.error ||
         err.response?.data?.message ||
+        err.message ||
         "Login failed. Check your credentials.";
       setError(message);
     } finally {

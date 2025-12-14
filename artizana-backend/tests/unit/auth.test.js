@@ -57,13 +57,16 @@ describe('Auth Controller - Unit - Login', () => {
     };
     res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
 
-    // For login we want findOne to return a user with comparePassword method
-    User.findOne.mockResolvedValue({
-      _id: 'mockId',
-      name: 'Login User',
-      email: 'login@example.com',
-      role: 'Buyer',
-      comparePassword: jest.fn().mockResolvedValue(true),
+    // For login we want findOne to return an object with a select method
+    // to support the chaining: User.findOne(...).select('+password')
+    User.findOne.mockReturnValue({
+      select: jest.fn().mockResolvedValue({
+        _id: 'mockId',
+        name: 'Login User',
+        email: 'login@example.com',
+        role: 'Buyer',
+        comparePassword: jest.fn().mockResolvedValue(true),
+      })
     });
 
     jwt.sign.mockReturnValue('mock-token');
