@@ -1,7 +1,7 @@
 // tests/integration/ProfileFlow.test.js
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
-import App from '../../App';
+// import App from '../../App';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

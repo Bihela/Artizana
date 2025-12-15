@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Constants from 'expo-constants';
 
 const ProfileScreen = ({ navigation }) => {
     const [user, setUser] = useState(null);
@@ -18,12 +19,14 @@ const ProfileScreen = ({ navigation }) => {
                     return;
                 }
 
-                // Use appropriate backend URL for mobile (often 10.0.2.2 for Android emulator or IP)
-                // For this environment, we'll assume localhost redirect or configured URL
-                // In real app, this should come from config
-                const BACKEND_URL = 'http://10.0.2.2:5000';
+                // Unified API URL logic matching Login.js
+                const API_BASE_URL =
+                    Constants?.expoConfig?.extra?.apiBaseUrl ||
+                    process.env.EXPO_PUBLIC_API_BASE_URL ||
+                    process.env.REACT_APP_API_BASE_URL ||
+                    "http://localhost:5001/api";
 
-                const response = await axios.get(`${BACKEND_URL}/api/auth/me`, {
+                const response = await axios.get(`${API_BASE_URL}/auth/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(response.data.user);
