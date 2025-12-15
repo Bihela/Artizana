@@ -5,11 +5,14 @@ import CompleteProfile from './pages/CompleteProfile';
 import NGOApplicationSuccess from './pages/NGOApplicationSuccess';
 import NGOApplyForm from './pages/NGOApplyForm';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
 
 // TEMP placeholders for KAN-6 dashboards
 const BuyerDashboard = () => <h1>Buyer Dashboard</h1>;
 const ArtisanDashboard = () => <h1>Artisan Dashboard</h1>;
 const NGODashboard = () => <h1>NGO Dashboard</h1>;
+
+
 
 function App() {
   return (
@@ -21,6 +24,7 @@ function App() {
         <Route path="/complete-profile" element={<CompleteProfile />} />
         <Route path="/ngoapply" element={<NGOApplyForm />} />
         <Route path="/ngo-success" element={<NGOApplicationSuccess />} />
+        <Route path="/profile" element={<Profile />} />
 
         {/* KAN-6 role based dashboards */}
         <Route path="/buyer-dashboard" element={<BuyerDashboard />} />

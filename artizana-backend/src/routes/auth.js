@@ -97,6 +97,7 @@ const loginHandler = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        profilePhoto: user.profilePhoto, // Added profilePhoto
       },
     });
   } catch (err) {
@@ -174,9 +175,41 @@ router.put('/update-role', async (req, res) => {
   }
 });
 
+/**
+ * Get Profile Handler
+ */
+const getProfileHandler = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profilePhoto: user.profilePhoto,
+        // Placeholder for activity - to be implemented fully later
+        recentActivity: [],
+      }
+    });
+  } catch (err) {
+    console.error('Get Profile error:', err);
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+router.get('/me', getProfileHandler);
+
 // Attach to routes
 router.post('/register', registerHandler);
 router.post('/login', loginHandler);
 
-// EXPORT BOTH — Frontend uses /api/auth/* → Tests can import handlers directly
-module.exports = { router, registerHandler, loginHandler };
+// EXPORT ALL
+module.exports = { router, registerHandler, loginHandler, getProfileHandler };

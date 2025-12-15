@@ -12,6 +12,7 @@ jest.mock('../../src/models/User', () => {
   const mockFindOne = jest.fn();
   const User = jest.fn().mockImplementation(() => mockUser);
   User.findOne = mockFindOne;
+  User.findById = jest.fn(); // Added findById support
   User.create = jest.fn().mockResolvedValue({
     _id: 'mockId',
     name: 'Test User',
@@ -34,7 +35,8 @@ jest.mock('../../src/config/casbin', () => ({
 
 // MOCK JWT
 jest.mock('jsonwebtoken', () => ({
-  sign: jest.fn().mockReturnValue('mock-jwt-token')
+  sign: jest.fn().mockReturnValue('mock-jwt-token'),
+  verify: jest.fn().mockReturnValue({ id: 'mockId' }) // Added verify mock
 }));
 
 process.env.JWT_SECRET = 'test-secret';
@@ -96,7 +98,36 @@ describe('Auth Integration', () => {
         name: 'Login User',
         email: 'login@example.com',
         role: 'Buyer',
+        email: 'login@example.com',
+        role: 'Buyer',
+        profilePhoto: undefined, // undefined in mock
       },
+    });
+  }, 10000);
+
+  test('GET /api/auth/me returns profile', async () => {
+    UserModel.findById.mockResolvedValue({
+      _id: 'mockId',
+      name: 'Profile User',
+      email: 'profile@example.com',
+      role: 'Buyer',
+      profilePhoto: 'http://example.com/photo.jpg'
+    });
+
+    const response = await request(app)
+      .get('/api/auth/me')
+      .set('Authorization', 'Bearer mock-jwt-token');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      user: {
+        id: 'mockId',
+        name: 'Profile User',
+        email: 'profile@example.com',
+        role: 'Buyer',
+        profilePhoto: 'http://example.com/photo.jpg',
+        recentActivity: [],
+      }
     });
   }, 10000);
 });

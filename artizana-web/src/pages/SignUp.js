@@ -56,7 +56,7 @@ const SignUp = () => {
         role,
       });
 
-      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('authToken', res.data.token);
 
       if (role === 'Buyer') navigate('/buyer-dashboard');
       else if (role === 'Artisan') navigate('/artisan-dashboard');
