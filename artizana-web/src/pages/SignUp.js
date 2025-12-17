@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
 
@@ -18,9 +20,34 @@ const SignUp = () => {
 
   const roles = ['Buyer', 'Artisan', 'NGO/Edu Partner'];
 
-  // Redirect to backend Google OAuth
-  const handleGoogleSignIn = () => {
-    window.location.href = `${API_BASE_URL}/auth/google`;
+  // Handle Google Sign In
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const idToken = credential.idToken;
+
+      const res = await axios.post(`${API_BASE_URL}/auth/google-web`, { idToken });
+
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('currentUser', JSON.stringify(res.data.user));
+
+      if (!res.data.user.role) {
+        navigate(`/complete-profile?token=${res.data.token}`);
+      } else if (res.data.user.role === 'Buyer') {
+        navigate('/buyer-dashboard');
+      } else {
+        navigate('/artisan-dashboard');
+      }
+
+    } catch (err) {
+      console.error("Google login error", err);
+      setError('Google Sign-In failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {

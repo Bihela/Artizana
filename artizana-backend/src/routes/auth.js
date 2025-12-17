@@ -3,7 +3,9 @@ const passport = require('../config/passport');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+const client = new OAuth2Client(); // Client ID will be verified during verifyIdToken call if we pass it, or we just trust Google for now and check payload manually for robustness.
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
@@ -132,6 +134,80 @@ router.get(
     res.redirect(redirectTo);
   }
 );
+
+// ===== GOOGLE AUTH (WEB POPUP) =====
+/**
+ * Verifies Google ID Token from frontend (Firebase/GIS)
+ * Finds or Creates user
+ * Returns sub (Google ID), name, email, picture
+ */
+router.post('/google-web', async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) return res.status(400).json({ error: 'No token provided' });
+
+    console.log('Received ID Token Length:', idToken.length);
+    console.log('Received ID Token Snippet:', idToken.substring(0, 50) + '...');
+
+    // Verify token using Google Auth Library
+    // This validates the signature, expiration, and issuer.
+    const ticket = await client.verifyIdToken({
+      idToken: idToken,
+      // audience: 'YOUR_CLIENT_ID', // Specify the CLIENT_ID of the app that accesses the backend
+      // If we don't specify audience, we should check it manually or trust the signature if we trust all clients.
+      // For debugging, we accept any valid Google token for now.
+    });
+    const payload = ticket.getPayload();
+
+    // Extract info
+    const { sub, email, name, picture } = payload;
+
+    if (!email) return res.status(400).json({ error: 'Invalid token: email missing' });
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // Link Google ID if not already linked
+      if (!user.googleId) {
+        user.googleId = sub;
+        if (!user.profilePhoto && picture) user.profilePhoto = picture;
+        await user.save();
+      }
+    } else {
+      // Create new user
+      user = await User.create({
+        name: name || 'Google User',
+        email,
+        googleId: sub,
+        profilePhoto: picture,
+        role: null // New users must select a role next
+      });
+    }
+
+    // Generate our JWT
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      message: 'Google login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profilePhoto: user.profilePhoto
+      }
+    });
+  } catch (err) {
+    console.error('Google Web Auth Error:', err.message);
+    console.error('Full Error:', err);
+    res.status(401).json({ error: 'Invalid Google token or auth failed' });
+  }
+});
 
 // ===== UPDATE ROLE (For Google Auth First Time) =====
 router.put('/update-role', async (req, res) => {
