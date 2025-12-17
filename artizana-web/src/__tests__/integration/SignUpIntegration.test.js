@@ -33,6 +33,13 @@ describe('SignUp Integration', () => {
       </MemoryRouter>
     );
 
+    fireEvent.change(screen.getByPlaceholderText('Email Address'), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByPlaceholderText('Confirm Password'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByPlaceholderText('Full Name'), { target: { value: 'Test User' } });
+    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Buyer' } });
+    fireEvent.click(screen.getByLabelText(/I agree to the Terms & Conditions/i));
+    fireEvent.click(screen.getByText('Sign Up with Email'));
     fireEvent.change(screen.getByPlaceholderText('Email'), {
       target: { value: 'test@example.com' },
     });

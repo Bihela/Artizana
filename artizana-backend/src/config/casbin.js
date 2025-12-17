@@ -1,4 +1,3 @@
-// src/config/casbin.js
 const { newEnforcer } = require('casbin');
 const path = require('path');
 

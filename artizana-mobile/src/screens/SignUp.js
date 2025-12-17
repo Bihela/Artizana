@@ -13,7 +13,7 @@ import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import Constants from 'expo-constants';
 
-const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5000/api';
+const API_BASE_URL = Constants?.expoConfig?.extra?.apiBaseUrl || 'http://localhost:5001/api';
 
 export default function SignUp({ navigation }) {
   const [name, setName] = useState('');

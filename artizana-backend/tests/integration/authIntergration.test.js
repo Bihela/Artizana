@@ -12,6 +12,12 @@ jest.mock('../../src/models/User', () => {
   const mockFindOne = jest.fn();
   const User = jest.fn().mockImplementation(() => mockUser);
   User.findOne = mockFindOne;
+  User.create = jest.fn().mockResolvedValue({
+    _id: 'mockId',
+    name: 'Test User',
+    email: 'test@example.com',
+    role: 'Buyer'
+  });
   return User;
 });
 
@@ -50,20 +56,28 @@ describe('Auth Integration', () => {
 
     expect(response.status).toBe(201);
     expect(response.body).toEqual({
-      message: 'Registration successful',
-      token: 'mock-jwt-token'
+      token: 'mock-jwt-token',
+      user: {
+        id: 'mockId',
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'Buyer'
+      }
     });
   }, 10000);
 
   // KAN-5: login integration test
   test('POST /api/auth/login authenticates user', async () => {
     // For this test, we want findOne to return a real-ish user object
-    UserModel.findOne.mockResolvedValue({
-      _id: 'mockId',
-      name: 'Login User',
-      email: 'login@example.com',
-      role: 'Buyer',
-      comparePassword: jest.fn().mockResolvedValue(true), // password matches
+    // support chaining .select('+password')
+    UserModel.findOne.mockReturnValue({
+      select: jest.fn().mockResolvedValue({
+        _id: 'mockId',
+        name: 'Login User',
+        email: 'login@example.com',
+        role: 'Buyer',
+        comparePassword: jest.fn().mockResolvedValue(true), // password matches
+      })
     });
 
     const response = await request(app)

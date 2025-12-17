@@ -1,99 +1,93 @@
-// artizana-mobile/src/components/LanguageSelectorModal.js
 import React from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
-const LANGUAGES = [
-  { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'si', label: 'සිංහල', flag: '🇱🇰' },
-];
+const { width } = Dimensions.get('window');
 
-export default function LanguageSelectorModal({ visible, onSelect }) {
+const LanguageSelectorModal = ({ visible, onSelectLanguage }) => {
   return (
     <Modal
-      transparent
-      visible={visible}
       animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={() => {
+        // Prevent closing by back button on Android
+      }}
     >
-      <View style={styles.backdrop}>
-        <View style={styles.card}>
-          <Text style={styles.title}>Choose your language</Text>
-          <Text style={styles.subtitle}>
-            Please select your preferred language to continue.
-          </Text>
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.title}>Select Language</Text>
+          <Text style={styles.subtitle}>Please choose your preferred language</Text>
 
-          {LANGUAGES.map((lang) => (
-            <TouchableOpacity
-              key={lang.code}
-              style={styles.button}
-              onPress={() => onSelect(lang.code)}
-            >
-              <Text style={styles.buttonText}>
-                {lang.flag} {lang.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => onSelectLanguage('en')}
+          >
+            <Text style={styles.buttonText}>English</Text>
+          </TouchableOpacity>
 
-          <Text style={styles.footer}>
-            This preference is saved on this device and reused next time.
-          </Text>
+          <TouchableOpacity
+            style={[styles.button, styles.lastButton]}
+            onPress={() => onSelectLanguage('si')}
+          >
+            <Text style={styles.buttonText}>Sinhala</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  backdrop: {
+  centeredView: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay
   },
-  card: {
+  modalView: {
+    width: width * 0.85,
     backgroundColor: 'white',
     borderRadius: 20,
-    paddingVertical: 24,
-    paddingHorizontal: 20,
-    width: '100%',
-    maxWidth: 360,
+    padding: 25,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 8,
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#1F2937',
   },
   subtitle: {
-    fontSize: 13,
-    color: '#6b7280',
+    fontSize: 16,
+    color: '#6B7280',
+    marginBottom: 20,
     textAlign: 'center',
-    marginBottom: 16,
   },
   button: {
     width: '100%',
-    paddingVertical: 12,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    marginBottom: 8,
+    backgroundColor: '#3B82F6',
+    borderRadius: 12,
+    padding: 15,
     alignItems: 'center',
+    marginBottom: 10,
+  },
+  lastButton: {
+    marginBottom: 0,
+    backgroundColor: '#10B981',
   },
   buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  footer: {
-    marginTop: 12,
-    fontSize: 11,
-    color: '#9ca3af',
-    textAlign: 'center',
   },
 });
+
+export default LanguageSelectorModal;
