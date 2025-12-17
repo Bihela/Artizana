@@ -1,35 +1,116 @@
+# bitbucket-pipelines.yml
+image: node:20
+
+options:
+  max-time: 15
+
+definitions:
+  caches:
+    node: node_modules
+    cypress: ~/.cache/Cypress
+
+  steps:
+    - step: &install-backend
+        name: Backend – Install
+        caches:
+          - node
+        script:
+          - cd artizana-backend
+          - npm ci
+        artifacts:
+          - artizana-backend/node_modules/**
+
+    - step: &test-backend
+        name: Backend – Test
+        script:
+          - cd artizana-backend
+          - npm test -- --coverage
+
+    - step: &install-mobile
+        name: Mobile – Install
+        caches:
+          - node
+        script:
+          - cd artizana-mobile
+          - npm ci
+
+    - step: &test-mobile
+        name: Mobile – Test
+        script:
+          - cd artizana-mobile
+          - npm test
+
+    - step: &install-web
+        name: Web – Install
+        caches:
+          - node
+        script:
+          - cd artizana-web
+          - npm ci
+
+    - step: &test-web-unit
+        name: Web – Unit & Jest
+        script:
+          - cd artizana-web
+          - npm test
+
+    - step: &test-web-cypress
+        name: Web – Cypress E2E
+        image: cypress/browsers:node20.17.0-chrome127
+        caches:
+          - node
+          - cypress
+        script:
+          - cd artizana-web
+          - npm run dev &
+          - npx wait-on http://localhost:3000 -t 30000
+          - npx cypress run --headless
+
 pipelines:
+  default: []
+
   pull-requests:
     '**':
-      - step:
-          name: Backend Tests
-          script:
-            - cd artizana-backend
-            - npm install
-            - npm test
-      - step:
-          name: Mobile Tests
-          script:
-            - cd artizana-mobile
-            - npm install
-            - npm test
-      - step:
-          name: Web Tests
-          script:
-            - cd artizana-web
-            - npm install
-            - npm test
+      - parallel:
+          - step: *install-backend
+          - step: *install-mobile
+          - step: *install-web
+      - parallel:
+          - step: *test-backend
+          - step: *test-mobile
+          - step: *test-web-unit
+          - step: *test-web-cypress
+
   branches:
+    dev:
+      - parallel:
+          - step: *install-backend
+          - step: *install-mobile
+          - step: *install-web
+      - parallel:
+          - step: *test-backend
+          - step: *test-mobile
+          - step: *test-web-unit
+          - step: *test-web-cypress
+
     main:
-      - step:
-          name: Run Tests on Main
-          script:
-            - cd artizana-backend
-            - npm install
-            - npm test
-            - cd ../artizana-mobile
-            - npm install
-            - npm test
-            - cd ../artizana-web
-            - npm install
-            - npm test
+      - parallel:
+          - step: *install-backend
+          - step: *install-mobile
+          - step: *install-web
+      - parallel:
+          - step: *test-backend
+          - step: *test-mobile
+          - step: *test-web-unit
+          - step: *test-web-cypress
+
+    sprint:
+      - parallel:
+          - step: *install-backend
+          - step: *install-mobile
+          - step: *install-web
+      - parallel:
+          - step: *test-backend
+          - step: *test-mobile
+          - step: *test-web-unit
+          - step: *test-web-cypress
