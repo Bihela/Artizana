@@ -60,8 +60,6 @@ definitions:
 
 
 pipelines:
-  default: []
-
 
   branches:
     dev:
