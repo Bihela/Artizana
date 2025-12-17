@@ -92,6 +92,14 @@ function Login() {
       localStorage.setItem("currentUser", JSON.stringify(data.user));
 
       setUser(data.user);
+
+      // KAN-6: redirect to role-specific dashboard AFTER successful login
+      const role = data.user?.role;
+
+      if (role === "Buyer") navigate("/buyer-dashboard", { replace: true });
+      else if (role === "Artisan") navigate("/artisan-dashboard", { replace: true });
+      else if (role === "NGO/Edu Partner") navigate("/ngo-dashboard", { replace: true });
+      else setError("Unknown role. Contact support.");
     } catch (err) {
       console.error("Login request failed", err);
       setError("Could not connect to server");

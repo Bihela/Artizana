@@ -34,7 +34,7 @@ describe('SignUp Integration', () => {
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledTimes(1);
       expect(axios.post).toHaveBeenCalledWith(
-        'http://localhost:5000/api/auth/register',
+        'http://localhost:5001/api/auth/register',
         expect.objectContaining({
           name: 'Test User',
           email: 'test@example.com',

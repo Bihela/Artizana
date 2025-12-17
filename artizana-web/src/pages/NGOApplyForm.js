@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
 
 export default function NGOApplyForm() {
   const [loading, setLoading] = useState(false);
@@ -65,7 +65,7 @@ export default function NGOApplyForm() {
           </div>
           <label className="mt-4 cursor-pointer">
             <span className="text-green-600 font-semibold hover:underline text-lg">
-              Upload NGO Logo 
+              Upload NGO Logo
             </span>
             <input
               type="file"
