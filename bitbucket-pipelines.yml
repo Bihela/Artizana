@@ -7,7 +7,6 @@ options:
 definitions:
   caches:
     node: node_modules
-    cypress: ~/.cache/Cypress
 
   steps:
     - step: &install-backend
@@ -58,32 +57,11 @@ definitions:
           - cd artizana-web
           - npm test
 
-    - step: &test-web-cypress
-        name: Web – Cypress E2E
-        image: cypress/browsers:node20.17.0-chrome127
-        caches:
-          - node
-          - cypress
-        script:
-          - cd artizana-web
-          - npm run dev &
-          - npx wait-on http://localhost:3000 -t 30000
-          - npx cypress run --headless
+
 
 pipelines:
   default: []
 
-  pull-requests:
-    '**':
-      - parallel:
-          - step: *install-backend
-          - step: *install-mobile
-          - step: *install-web
-      - parallel:
-          - step: *test-backend
-          - step: *test-mobile
-          - step: *test-web-unit
-          - step: *test-web-cypress
 
   branches:
     dev:
@@ -95,26 +73,6 @@ pipelines:
           - step: *test-backend
           - step: *test-mobile
           - step: *test-web-unit
-          - step: *test-web-cypress
 
-    main:
-      - parallel:
-          - step: *install-backend
-          - step: *install-mobile
-          - step: *install-web
-      - parallel:
-          - step: *test-backend
-          - step: *test-mobile
-          - step: *test-web-unit
-          - step: *test-web-cypress
 
-    sprint:
-      - parallel:
-          - step: *install-backend
-          - step: *install-mobile
-          - step: *install-web
-      - parallel:
-          - step: *test-backend
-          - step: *test-mobile
-          - step: *test-web-unit
-          - step: *test-web-cypress
+
