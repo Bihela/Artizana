@@ -33,6 +33,8 @@ definitions:
         script:
           - cd artizana-mobile
           - npm ci
+        artifacts:
+          - artizana-mobile/node_modules/**
 
     - step: &test-mobile
         name: Mobile – Test
@@ -47,6 +49,8 @@ definitions:
         script:
           - cd artizana-web
           - npm ci
+        artifacts:
+          - artizana-web/node_modules/**
 
     - step: &test-web-unit
         name: Web – Unit & Jest
