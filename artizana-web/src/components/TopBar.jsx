@@ -20,7 +20,7 @@ const TopBar = () => {
 
                     {/* Left Section: Menu & Logo */}
                     <div className="flex items-center gap-4">
-                        <button className="p-2 rounded-md hover:bg-gray-100 text-gray-500">
+                        <button className="p-2 rounded-md hover:bg-gray-100 text-gray-500" aria-label="Open menu">
                             <Bars3Icon className="h-6 w-6" />
                         </button>
                         <div className="flex-shrink-0 flex items-center">
@@ -39,12 +39,14 @@ const TopBar = () => {
                                     type="text"
                                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-l-md leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Search for products or artisans"
+                                    aria-label="Search"
                                 />
                             </div>
                             <div className="relative inline-block text-left">
                                 <button
                                     type="button"
                                     className="inline-flex justify-center w-full rounded-r-md border border-l-0 border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+                                    aria-label="Select category"
                                 >
                                     {category}
                                     <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
@@ -55,11 +57,11 @@ const TopBar = () => {
 
                     {/* Right Section: Icons & Menu */}
                     <div className="flex items-center gap-4">
-                        <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 relative">
+                        <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 relative" aria-label="Cart">
                             <ShoppingCartIcon className="h-6 w-6" />
                         </button>
 
-                        <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 relative">
+                        <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 relative" aria-label="Notifications">
                             <BellIcon className="h-6 w-6" />
                         </button>
 
@@ -68,6 +70,7 @@ const TopBar = () => {
                             <button
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                                 className="p-2 rounded-full hover:bg-gray-100 text-gray-500"
+                                aria-label="User menu"
                             >
                                 <UserIcon className="h-6 w-6" />
                             </button>
