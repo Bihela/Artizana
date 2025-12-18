@@ -1,4 +1,5 @@
 // artizana-mobile/App.js
+import "./global.css";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -11,6 +12,9 @@ import Login from './src/screens/Login';
 import BuyerDashboard from './src/screens/BuyerDashboard';
 import ArtisanDashboard from './src/screens/ArtisanDashboard';
 import NgoDashboard from './src/screens/NgoDashboard';
+
+// KAN-91: Navigation
+import TabNavigator from './src/navigation/TabNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +43,13 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
+        <Stack.Screen
+          name="MainTabs"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+
+        {/* Keeping old dashboard routes for reference or other roles */}
         <Stack.Screen
           name="BuyerDashboard"
           component={BuyerDashboard}

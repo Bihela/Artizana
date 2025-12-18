@@ -34,7 +34,7 @@ const Login = () => {
 
     if (email === "test@example.com" && password === "password123") {
       // skip axios and just navigate
-      navigation.replace("BuyerDashboard");
+      navigation.replace("MainTabs");
       return;
     }
 
@@ -58,7 +58,7 @@ const Login = () => {
 
       // Match the web dashboard routes concept - KAN-6
       if (role === "Buyer") {
-        navigation.replace("BuyerDashboard");
+        navigation.replace("MainTabs");
       } else if (role === "Artisan") {
         navigation.replace("ArtisanDashboard");
       } else if (role === "NGO/Edu Partner") {
