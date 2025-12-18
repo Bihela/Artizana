@@ -11,5 +11,5 @@ test("navigates to /login and shows login form", () => {
   render(<App />);
 
   // Assert that the login screen is visible
-  expect(screen.getByText(/Artizana Login/i)).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /Artizana Login/i })).toBeInTheDocument();
 });

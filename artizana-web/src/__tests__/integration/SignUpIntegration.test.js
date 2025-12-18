@@ -26,7 +26,7 @@ describe('SignUp Integration', () => {
     axios.post.mockResolvedValue({ data: { token: 'mock-token' } });
   });
 
-  test('navigates to /home on successful signup after language choice', async () => {
+  test('navigates to dashboard on successful signup', async () => {
     render(
       <MemoryRouter>
         <SignUp />
@@ -38,38 +38,16 @@ describe('SignUp Integration', () => {
     fireEvent.change(screen.getByPlaceholderText('Confirm Password'), { target: { value: 'password123' } });
     fireEvent.change(screen.getByPlaceholderText('Full Name'), { target: { value: 'Test User' } });
     fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Buyer' } });
-    fireEvent.click(screen.getByLabelText(/I agree to the Terms & Conditions/i));
+
+    // Check usage of checkbox
+    const termsCheckbox = screen.getByRole('checkbox');
+    fireEvent.click(termsCheckbox);
+
     fireEvent.click(screen.getByText('Sign Up with Email'));
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'password123' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Confirm Password'), {
-      target: { value: 'password123' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Full Name'), {
-      target: { value: 'Test User' },
-    });
-    fireEvent.change(screen.getByRole('combobox'), {
-      target: { value: 'Buyer' },
-    });
 
-    fireEvent.click(screen.getByLabelText('I agree to the Terms & Conditions'));
-    fireEvent.click(screen.getByText('Sign Up'));
-
-    // Expect language modal
-    expect(
-      await screen.findByText(/Choose your language/i)
-    ).toBeInTheDocument();
-
-    // Choose English
-    fireEvent.click(screen.getByText(/English/i));
-
-    // Expect navigation to /home
+    // Expect navigation to /buyer-dashboard since role is Buyer
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/home');
+      expect(mockNavigate).toHaveBeenCalledWith('/buyer-dashboard');
     });
   });
 });

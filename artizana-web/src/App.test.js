@@ -2,7 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders Artizana heading', () => {
+test('renders Choose your language heading', () => {
   render(<App />);
-  expect(screen.getByRole('heading', { name: /artizana/i })).toBeInTheDocument();
+  expect(screen.getByText(/Choose your language/i)).toBeInTheDocument();
 });

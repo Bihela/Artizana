@@ -32,7 +32,7 @@ describe('SignUp Component', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
-  test('submits form with valid data after selecting language', async () => {
+  test('submits form with valid data', async () => {
     render(<SignUp />);
 
     fireEvent.change(screen.getByPlaceholderText('Email Address'), { target: { value: 'test@example.com' } });
@@ -43,15 +43,7 @@ describe('SignUp Component', () => {
     fireEvent.click(screen.getByLabelText(/I agree to the Terms & Conditions/i));
     fireEvent.click(screen.getByText('Sign Up with Email'));
 
-    // Modal should appear
-    expect(
-      await screen.findByText(/Choose your language/i)
-    ).toBeInTheDocument();
-
-    // Select English in the popup
-    fireEvent.click(screen.getByText(/English/i));
-
-    // Now axios.post should be called
+    // Now axios.post should be called directly
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
         expect.any(String),
@@ -64,9 +56,9 @@ describe('SignUp Component', () => {
       );
     });
 
-    // And navigation should go to /home
+    // And navigation should go to /buyer-dashboard
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/home');
+      expect(mockNavigate).toHaveBeenCalledWith('/buyer-dashboard');
     });
   });
 });
