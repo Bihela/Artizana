@@ -1,7 +1,11 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LanguageContext = createContext();
+const LanguageContext = createContext({
+    language: null,
+    selectLanguage: () => { },
+    isLoading: true
+});
 
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState(null);

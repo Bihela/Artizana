@@ -15,7 +15,7 @@ const LanguageSelectorModal = ({ visible, onSelectLanguage }) => {
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text style={styles.title}>Select Language</Text>
+          <Text style={styles.title}>Choose your language</Text>
           <Text style={styles.subtitle}>Please choose your preferred language</Text>
 
           <TouchableOpacity
@@ -29,7 +29,7 @@ const LanguageSelectorModal = ({ visible, onSelectLanguage }) => {
             style={[styles.button, styles.lastButton]}
             onPress={() => onSelectLanguage('si')}
           >
-            <Text style={styles.buttonText}>Sinhala</Text>
+            <Text style={styles.buttonText}>සිංහල</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import HomeScreen from '../../src/screens/HomeScreen';
+import { LanguageProvider } from '../../src/context/LanguageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
@@ -17,7 +18,11 @@ describe('HomeScreen - KAN-9 Language Selector', () => {
   it('shows language modal when no preferredLanguage is stored', async () => {
     AsyncStorage.getItem.mockResolvedValueOnce(null);
 
-    const { getByText } = render(<HomeScreen />);
+    const { getByText } = render(
+      <LanguageProvider>
+        <HomeScreen />
+      </LanguageProvider>
+    );
 
     await waitFor(() => {
       expect(getByText(/Choose your language/i)).toBeTruthy();
@@ -29,7 +34,11 @@ describe('HomeScreen - KAN-9 Language Selector', () => {
   it('does not show modal when preferredLanguage exists', async () => {
     AsyncStorage.getItem.mockResolvedValueOnce('en');
 
-    const { queryByText, getByText } = render(<HomeScreen />);
+    const { queryByText, getByText } = render(
+      <LanguageProvider>
+        <HomeScreen />
+      </LanguageProvider>
+    );
 
     await waitFor(() => {
       expect(queryByText(/Choose your language/i)).toBeNull();

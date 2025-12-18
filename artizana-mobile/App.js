@@ -6,6 +6,7 @@ import SignUp from './src/screens/SignUp';
 import NGOApplyScreen from './src/screens/NGOApplyScreen';
 import NGOApplicationSuccessScreen from './src/screens/NGOApplicationSuccessScreen';
 import Login from './src/screens/Login';
+import HomeScreen from './src/screens/HomeScreen';
 
 // KAN 6: add your role dashboards
 import BuyerDashboard from './src/screens/BuyerDashboard';
@@ -19,7 +20,12 @@ export default function App() {
   return (
     <LanguageProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="SignUp">
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen
             name="SignUp"
             component={SignUp}
