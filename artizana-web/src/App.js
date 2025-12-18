@@ -1,5 +1,6 @@
 // src/App.js
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
 import SignUp from './pages/SignUp';
 import CompleteProfile from './pages/CompleteProfile';
 import NGOApplicationSuccess from './pages/NGOApplicationSuccess';
@@ -15,17 +16,19 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<SignUp />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/complete-profile" element={<CompleteProfile />} />
-        <Route path="/ngoapply" element={<NGOApplyForm />} />
-        <Route path="/ngo-success" element={<NGOApplicationSuccess />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<SignUp />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/complete-profile" element={<CompleteProfile />} />
+          <Route path="/ngoapply" element={<NGOApplyForm />} />
+          <Route path="/ngo-success" element={<NGOApplicationSuccess />} />
 
-        {/* KAN-6 role based dashboards */}
-        <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
-        <Route path="/artisan-dashboard" element={<ArtisanDashboard />} />
-        <Route path="/ngo-dashboard" element={<NGODashboard />} />
+          {/* KAN-6 role based dashboards */}
+          <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
+          <Route path="/artisan-dashboard" element={<ArtisanDashboard />} />
+          <Route path="/ngo-dashboard" element={<NGODashboard />} />
+        </Route>
       </Routes>
     </Router>
   );
