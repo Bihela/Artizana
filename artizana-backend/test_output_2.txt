@@ -1,0 +1,31 @@
+
+> artizana-backend@1.0.0 test
+> jest tests/unit/googleAuth.test.js
+
+  console.log
+    GOOGLE_CLIENT_ID loaded: YES
+
+      at Object.log (src/config/passport.js:5:9)
+
+PASS tests/unit/googleAuth.test.js
+  POST /google-web
+    ✓ should return 400 if no token provided (26 ms)
+    ✓ should create a new user and return token when valid google token provided (7 ms)
+    ✓ should login existing user and return token (3 ms)
+
+--------------|---------|----------|---------|---------|----------------------------------------------
+File          | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                            
+--------------|---------|----------|---------|---------|----------------------------------------------
+All files     |   36.13 |    17.85 |      10 |   37.83 |                                              
+ config       |   33.33 |     12.5 |       0 |   36.36 |                                              
+  passport.js |   33.33 |     12.5 |       0 |   36.36 | 13-32,37-38                                  
+ models       |      50 |        0 |       0 |   54.54 |                                              
+  User.js     |      50 |        0 |       0 |   54.54 | 14-17,21-22                                  
+ routes       |   34.93 |    21.42 |      20 |   35.89 |                                              
+  auth.js     |   34.93 |    21.42 |      20 |   35.89 | 17-53,63-104,121-132,159-161,193-194,200-235 
+--------------|---------|----------|---------|---------|----------------------------------------------
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.755 s, estimated 1 s
+Ran all test suites matching tests/unit/googleAuth.test.js.
