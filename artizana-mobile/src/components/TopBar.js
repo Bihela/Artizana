@@ -7,13 +7,13 @@ const TopBar = () => {
     return (
         <SafeAreaView style={styles.safe}>
             <View style={styles.row}>
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity style={styles.iconBtn} testID="menu-button">
                     <Bars3Icon size={24} color="#374151" />
                 </TouchableOpacity>
 
                 <Text style={styles.title}>Artizana</Text>
 
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity style={styles.iconBtn} testID="settings-button">
                     <Cog6ToothIcon size={24} color="#374151" />
                 </TouchableOpacity>
             </View>
