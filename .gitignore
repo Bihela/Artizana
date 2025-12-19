@@ -3,6 +3,7 @@
 # Ignore other common files
 *.log
 *.env
-# Ignore build artifacts
+# Ignore build artifacts and coverage
 **/build/
 **/dist/
+**/coverage/
