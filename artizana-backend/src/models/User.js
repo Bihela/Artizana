@@ -8,16 +8,24 @@ const userSchema = new mongoose.Schema({
   googleId: { type: String, unique: true, sparse: true },
   role: { type: String, enum: ['Buyer', 'Artisan', 'NGO/Edu Partner', 'Admin'], default: null },
   profilePhoto: String,
+
+  // Artisan specific
+  bio: { type: String, trim: true },
+  location: { type: String, trim: true },
+
+  // Buyer specific
+  phoneNumber: { type: String, trim: true },
+  shippingAddress: { type: String, trim: true },
 }, { timestamps: true });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (this.isModified('password') && this.password) {
     this.password = await bcrypt.hash(this.password, 12);
   }
   next();
 });
 
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };

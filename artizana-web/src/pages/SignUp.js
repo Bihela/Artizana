@@ -58,9 +58,12 @@ const SignUp = () => {
 
       localStorage.setItem('token', res.data.token);
 
-      if (role === 'Buyer') navigate('/buyer-dashboard');
-      else if (role === 'Artisan') navigate('/artisan-dashboard');
-      else navigate('/ngo-dashboard');
+      if (role) {
+        // Even if role is selected, we need to complete profile (bio, etc.)
+        navigate('/complete-profile');
+      } else {
+        navigate('/complete-profile');
+      }
 
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed. Try again.');

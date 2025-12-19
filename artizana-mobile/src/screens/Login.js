@@ -56,15 +56,30 @@ const Login = () => {
 
       const role = user?.role || "Buyer";
 
-      // Match the web dashboard routes concept - KAN-6
-      if (role === "Buyer") {
-        navigation.replace("BuyerDashboard");
-      } else if (role === "Artisan") {
-        navigation.replace("ArtisanDashboard");
-      } else if (role === "NGO/Edu Partner") {
-        navigation.replace("NgoDashboard");
+
+      let isComplete = false;
+      if (role === 'Buyer') {
+        if (user.phoneNumber && user.shippingAddress) isComplete = true;
+      } else if (role === 'Artisan') {
+        if (user.bio && user.location) isComplete = true;
+      } else if (role === 'NGO/Edu Partner') {
+        isComplete = true;
+      } else if (role === 'Admin') isComplete = true;
+
+      // Navigate based on completeness
+      if (!isComplete) {
+        navigation.replace("CompleteProfile");
       } else {
-        setError("Unknown role. Contact support.");
+        // Match the web dashboard routes concept - KAN-6
+        if (role === "Buyer") {
+          navigation.replace("BuyerDashboard");
+        } else if (role === "Artisan") {
+          navigation.replace("ArtisanDashboard");
+        } else if (role === "NGO/Edu Partner") {
+          navigation.replace("NgoDashboard");
+        } else {
+          setError("Unknown role. Contact support.");
+        }
       }
     } catch (err) {
       const message =
