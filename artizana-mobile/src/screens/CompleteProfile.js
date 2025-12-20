@@ -177,22 +177,22 @@ export default function CompleteProfile({ navigation, route }) {
             </View>
 
             <Text style={styles.label}>Full Name</Text>
-            <TextInput style={styles.input} value={formData.name} onChangeText={t => setFormData({ ...formData, name: t })} />
+            <TextInput style={styles.input} value={formData.name} onChangeText={t => setFormData({ ...formData, name: t })} testID="input-name" />
 
             <Text style={styles.label}>Email</Text>
-            <TextInput style={styles.input} value={formData.email} onChangeText={t => setFormData({ ...formData, email: t })} keyboardType="email-address" />
+            <TextInput style={styles.input} value={formData.email} onChangeText={t => setFormData({ ...formData, email: t })} keyboardType="email-address" testID="input-email" />
 
             <Text style={styles.label}>New Password (Optional)</Text>
-            <TextInput style={styles.input} value={formData.password} onChangeText={t => setFormData({ ...formData, password: t })} secureTextEntry placeholder="Leave blank to keep current" />
+            <TextInput style={styles.input} value={formData.password} onChangeText={t => setFormData({ ...formData, password: t })} secureTextEntry placeholder="Leave blank to keep current" testID="input-password" />
 
             {formData.role === 'Artisan' && (
                 <>
                     <Text style={styles.sectionHeader}>Artisan Details</Text>
                     <Text style={styles.label}>Bio</Text>
-                    <TextInput style={[styles.input, styles.textArea]} value={formData.bio} onChangeText={t => setFormData({ ...formData, bio: t })} multiline numberOfLines={4} placeholder="Tell us about yourself..." />
+                    <TextInput style={[styles.input, styles.textArea]} value={formData.bio} onChangeText={t => setFormData({ ...formData, bio: t })} multiline numberOfLines={4} placeholder="Tell us about yourself..." testID="input-bio" />
 
                     <Text style={styles.label}>Location</Text>
-                    <TextInput style={styles.input} value={formData.location} onChangeText={t => setFormData({ ...formData, location: t })} placeholder="e.g. Kandy, Sri Lanka" />
+                    <TextInput style={styles.input} value={formData.location} onChangeText={t => setFormData({ ...formData, location: t })} placeholder="e.g. Kandy, Sri Lanka" testID="input-location" />
                 </>
             )}
 
@@ -200,14 +200,14 @@ export default function CompleteProfile({ navigation, route }) {
                 <>
                     <Text style={styles.sectionHeader}>Buyer Details</Text>
                     <Text style={styles.label}>Phone Number</Text>
-                    <TextInput style={styles.input} value={formData.phoneNumber} onChangeText={t => setFormData({ ...formData, phoneNumber: t })} keyboardType="phone-pad" />
+                    <TextInput style={styles.input} value={formData.phoneNumber} onChangeText={t => setFormData({ ...formData, phoneNumber: t })} keyboardType="phone-pad" testID="input-phone" />
 
                     <Text style={styles.label}>Shipping Address</Text>
-                    <TextInput style={[styles.input, styles.textArea]} value={formData.shippingAddress} onChangeText={t => setFormData({ ...formData, shippingAddress: t })} multiline numberOfLines={3} />
+                    <TextInput style={[styles.input, styles.textArea]} value={formData.shippingAddress} onChangeText={t => setFormData({ ...formData, shippingAddress: t })} multiline numberOfLines={3} testID="input-address" />
                 </>
             )}
 
-            <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={saving}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={saving} testID="button-submit">
                 {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Complete Profile</Text>}
             </TouchableOpacity>
         </ScrollView>
