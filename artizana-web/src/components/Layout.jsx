@@ -1,11 +1,15 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import TopBar from './TopBar';
 
 const Layout = () => {
+    const location = useLocation();
+    const hideTopBarPaths = ['/login', '/signup', '/', '/ngoapply', '/ngo-success', '/complete-profile'];
+    const shouldHideTopBar = hideTopBarPaths.includes(location.pathname);
+
     return (
         <div className="min-h-screen bg-gray-50">
-            <TopBar />
+            {!shouldHideTopBar && <TopBar />}
             <main>
                 <Outlet />
             </main>
