@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import CompleteProfile from '../screens/CompleteProfile';
+import CompleteProfile from '../../src/screens/CompleteProfile';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
