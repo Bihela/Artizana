@@ -57,9 +57,21 @@ export default function SignUp({ navigation }) {
         role,
       });
 
+      // Save token and role to storage so CompleteProfile can use 'me'
+      const { token, user } = response.data;
+      if (token) {
+        // Import AsyncStorage if not already imported, or verify imports
+        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+        await AsyncStorage.setItem('token', token);
+        if (user && user.role) {
+          await AsyncStorage.setItem('role', user.role);
+        }
+      }
+
       Alert.alert('Success', 'Account created successfully!');
-      // TODO: Navigate based on role later
-      navigation.replace('Home'); // or Login / Profile
+
+      // Navigate to CompleteProfile regardless of role initially
+      navigation.replace('CompleteProfile');
     } catch (err) {
       const errMsg =
         err.response?.data?.error ||

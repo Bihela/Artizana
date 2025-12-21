@@ -5,6 +5,11 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+const multer = require('multer');
+const { uploadFileToFirebase } = require('../utils/uploadToFirebase');
+
+const upload = multer({ storage: multer.memoryStorage() });
+
 const client = new OAuth2Client(); // Client ID will be verified during verifyIdToken call if we pass it, or we just trust Google for now and check payload manually for robustness.
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
@@ -99,6 +104,11 @@ const loginHandler = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        bio: user.bio,
+        location: user.location,
+        phoneNumber: user.phoneNumber,
+        shippingAddress: user.shippingAddress,
+        profilePhoto: user.profilePhoto
       },
     });
   } catch (err) {
@@ -126,12 +136,30 @@ router.get(
       { expiresIn: '7d' }
     );
 
-    const redirectTo = req.user.role
-      ? `${FRONTEND_URL}/${req.user.role === 'Buyer' ? 'buyer-dashboard' : 'artisan-dashboard'}?token=${token}`
-      : `${FRONTEND_URL}/complete-profile?token=${token}`;
+    let target = `${FRONTEND_URL}/complete-profile?token=${token}`;
 
-    console.log('Redirecting Google user to:', redirectTo);
-    res.redirect(redirectTo);
+    if (req.user.role) {
+      let isComplete = false;
+      if (req.user.role === 'Buyer') {
+        if (req.user.phoneNumber && req.user.shippingAddress) isComplete = true;
+      } else if (req.user.role === 'Artisan') {
+        if (req.user.bio && req.user.location) isComplete = true;
+      } else if (req.user.role === 'NGO/Edu Partner') {
+        isComplete = true; // Assuming no extra mandatory fields for now
+      } else if (req.user.role === 'Admin') {
+        isComplete = true;
+      }
+
+      if (isComplete) {
+        if (req.user.role === 'Buyer') target = `${FRONTEND_URL}/buyer-dashboard?token=${token}`;
+        else if (req.user.role === 'Artisan') target = `${FRONTEND_URL}/artisan-dashboard?token=${token}`;
+        else if (req.user.role === 'NGO/Edu Partner') target = `${FRONTEND_URL}/ngo-dashboard?token=${token}`;
+        else if (req.user.role === 'Admin') target = `${FRONTEND_URL}/admin-dashboard?token=${token}`;
+      }
+    }
+
+    console.log('Redirecting Google user to:', target);
+    res.redirect(target);
   }
 );
 
@@ -247,6 +275,106 @@ router.put('/update-role', async (req, res) => {
   } catch (err) {
     console.error('Update role error:', err);
     res.status(500).json({ error: 'Failed to update role' });
+  }
+});
+
+// ===== GET CURRENT USER (ME) =====
+router.get('/me', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        bio: user.bio,
+        location: user.location,
+        phoneNumber: user.phoneNumber,
+        shippingAddress: user.shippingAddress,
+        profilePhoto: user.profilePhoto
+      }
+    });
+  } catch (err) {
+    console.error('Get me error:', err);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
+// ===== UPDATE PROFILE =====
+router.put('/update-profile', upload.single('profilePhoto'), async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const { name, email, password, bio, location, phoneNumber, shippingAddress, role } = req.body;
+
+    // Update fields if provided
+    if (name) user.name = name;
+    if (email) {
+      // Check uniqueness if email is changing
+      if (email !== user.email) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ error: 'Email already in use' });
+        user.email = email;
+      }
+    }
+    if (password) user.password = password; // Will be hashed by pre-save hook
+    if (role) {
+      if (['Buyer', 'Artisan', 'NGO/Edu Partner'].includes(role)) {
+        user.role = role;
+      }
+    }
+    if (bio) user.bio = bio;
+    if (location) user.location = location;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (shippingAddress) user.shippingAddress = shippingAddress;
+
+    // Handle Profile Photo Upload
+    if (req.file) {
+      const downloadURL = await uploadFileToFirebase(req.file.buffer, req.file.originalname, 'profile-photos');
+      user.profilePhoto = downloadURL;
+    }
+
+    await user.save();
+
+    // Return new token
+    const newToken = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token: newToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        bio: user.bio,
+        location: user.location,
+        phoneNumber: user.phoneNumber,
+        shippingAddress: user.shippingAddress,
+        profilePhoto: user.profilePhoto
+      }
+    });
+
+  } catch (err) {
+    console.error('Update profile error:', err);
+    res.status(500).json({ error: 'Failed to update profile' });
   }
 });
 
