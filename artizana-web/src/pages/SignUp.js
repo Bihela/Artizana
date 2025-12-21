@@ -18,7 +18,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const roles = ['Buyer', 'Artisan', 'NGO/Edu Partner'];
+  const roles = ['Buyer', 'Artisan'];
 
   // Handle Google Sign In
   const handleGoogleSignIn = async () => {
