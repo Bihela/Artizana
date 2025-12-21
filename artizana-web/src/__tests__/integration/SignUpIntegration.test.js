@@ -41,7 +41,7 @@ describe('SignUp Integration', () => {
     fireEvent.click(screen.getByText('Sign Up with Email'));
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/buyer-dashboard');
+      expect(mockNavigate).toHaveBeenCalledWith('/complete-profile');
     });
   });
 });
