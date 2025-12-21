@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import Constants from 'expo-constants';
 
@@ -124,16 +123,26 @@ export default function SignUp({ navigation }) {
       />
 
       <Text style={styles.label}>Select Role</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={role}
-          onValueChange={(itemValue) => setRole(itemValue)}
-          style={styles.picker}
-        >
-          {roles.map((r) => (
-            <Picker.Item key={r} label={r} value={r} />
-          ))}
-        </Picker>
+      <View style={styles.roleContainer}>
+        {roles.map((r) => (
+          <TouchableOpacity
+            key={r}
+            style={[
+              styles.roleButton,
+              role === r && styles.selectedRoleButton,
+            ]}
+            onPress={() => setRole(r)}
+          >
+            <Text
+              style={[
+                styles.roleButtonText,
+                role === r && styles.selectedRoleButtonText,
+              ]}
+            >
+              {r}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -210,16 +219,32 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     color: '#374151',
   },
-  pickerContainer: {
+  roleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    gap: 12,
+  },
+  roleButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#e5e7eb',
-    borderRadius: 12,
-    marginBottom: 16,
-    overflow: 'hidden',
     backgroundColor: 'white',
+    alignItems: 'center',
   },
-  picker: {
-    height: 50,
+  selectedRoleButton: {
+    borderColor: '#10b981',
+    backgroundColor: '#ecfdf5',
+  },
+  roleButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6b7280',
+  },
+  selectedRoleButtonText: {
+    color: '#10b981',
   },
   error: {
     color: '#ef4444',
