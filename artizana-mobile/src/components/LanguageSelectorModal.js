@@ -21,6 +21,7 @@ const LanguageSelectorModal = ({ visible, onSelectLanguage }) => {
           <TouchableOpacity
             style={styles.button}
             onPress={() => onSelectLanguage('en')}
+            testID="button-en"
           >
             <Text style={styles.buttonText}>English</Text>
           </TouchableOpacity>
@@ -28,6 +29,7 @@ const LanguageSelectorModal = ({ visible, onSelectLanguage }) => {
           <TouchableOpacity
             style={[styles.button, styles.lastButton]}
             onPress={() => onSelectLanguage('si')}
+            testID="button-si"
           >
             <Text style={styles.buttonText}>සිංහල</Text>
           </TouchableOpacity>

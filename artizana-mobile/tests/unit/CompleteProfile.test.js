@@ -18,6 +18,13 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
     getItem: jest.fn(),
     setItem: jest.fn(),
 }));
+jest.mock('../../src/context/LanguageContext', () => ({
+    useLanguage: () => ({
+        selectLanguage: jest.fn(),
+        language: null,
+        isLoading: false,
+    }),
+}));
 
 describe('CompleteProfile Screen', () => {
     const mockNavigation = {
@@ -86,8 +93,14 @@ describe('CompleteProfile Screen', () => {
         // Submit
         fireEvent.press(submitButton);
 
+        // Wait for update
+        await waitFor(() => expect(axios.put).toHaveBeenCalled());
+
+        // Now modal should be visible, click English button
+        const enButton = getByTestId('button-en');
+        fireEvent.press(enButton);
+
         await waitFor(() => {
-            expect(axios.put).toHaveBeenCalled();
             expect(mockNavigation.replace).toHaveBeenCalledWith('MainTabs');
         });
     });
