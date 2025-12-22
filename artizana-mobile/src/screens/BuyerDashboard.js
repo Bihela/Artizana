@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+<<<<<<< HEAD
 import LanguageSelectorModal from "../components/LanguageSelectorModal";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -16,6 +17,14 @@ export default function BuyerDashboard() {
         visible={!isLoading && !language}
         onSelectLanguage={selectLanguage}
       />
+=======
+
+export default function BuyerDashboard() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Buyer Dashboard</Text>
+      <Text style={styles.text}>Welcome Buyer 👋</Text>
+>>>>>>> dev
     </View>
   );
 }

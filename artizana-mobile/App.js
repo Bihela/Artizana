@@ -14,10 +14,21 @@ import ArtisanDashboard from './src/screens/ArtisanDashboard';
 import NgoDashboard from './src/screens/NgoDashboard';
 import { LanguageProvider } from './src/context/LanguageContext';
 
+// KAN 6: add your role dashboards
+import BuyerDashboard from './src/screens/BuyerDashboard';
+import ArtisanDashboard from './src/screens/ArtisanDashboard';
+
+import NgoDashboard from './src/screens/NgoDashboard';
+import CompleteProfile from './src/screens/CompleteProfile';
+
+// KAN-91: Navigation
+import TabNavigator from './src/navigation/TabNavigator';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+<<<<<<< HEAD
     <LanguageProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
@@ -65,5 +76,61 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </LanguageProvider>
+=======
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="SignUp">
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{ title: 'Sign Up' }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ title: 'Login' }}
+        />
+        <Stack.Screen
+          name="NGOApply"
+          component={NGOApplyScreen}
+          options={{ title: 'Apply as NGO' }}
+        />
+        <Stack.Screen
+          name="NGOApplicationSuccess"
+          component={NGOApplicationSuccessScreen}
+          options={{ headerShown: false }}
+        />
+
+
+
+        <Stack.Screen
+          name="CompleteProfile"
+          component={CompleteProfile}
+          options={{ title: 'Complete Profile' }}
+        />
+        <Stack.Screen
+          name="MainTabs"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+
+        {/* Keeping old dashboard routes for reference or other roles */}
+        <Stack.Screen
+          name="BuyerDashboard"
+          component={BuyerDashboard}
+          options={{ title: 'Buyer Dashboard' }}
+        />
+        <Stack.Screen
+          name="ArtisanDashboard"
+          component={ArtisanDashboard}
+          options={{ title: 'Artisan Dashboard' }}
+        />
+        <Stack.Screen
+          name="NgoDashboard"
+          component={NgoDashboard}
+          options={{ title: 'NGO Dashboard' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+>>>>>>> dev
   );
 }

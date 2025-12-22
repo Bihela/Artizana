@@ -38,6 +38,11 @@ describe('SignUp Integration', () => {
     fireEvent.change(screen.getByPlaceholderText('Confirm Password'), { target: { value: 'password123' } });
     fireEvent.change(screen.getByPlaceholderText('Full Name'), { target: { value: 'Test User' } });
     fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Buyer' } });
+<<<<<<< HEAD
+=======
+    fireEvent.click(screen.getByLabelText(/I agree to the Terms & Conditions/i));
+    fireEvent.click(screen.getByText('Sign Up with Email'));
+>>>>>>> dev
 
     // Check usage of checkbox
     const termsCheckbox = screen.getByRole('checkbox');
@@ -47,7 +52,7 @@ describe('SignUp Integration', () => {
 
     // Expect navigation to /buyer-dashboard since role is Buyer
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/buyer-dashboard');
+      expect(mockNavigate).toHaveBeenCalledWith('/complete-profile');
     });
   });
 });
