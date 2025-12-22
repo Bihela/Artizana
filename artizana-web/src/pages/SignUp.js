@@ -18,7 +18,9 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const roles = ['Buyer', 'Artisan'];
+  const roles = ['Buyer', 'Artisan', 'NGO/Edu Partner'];
+
+
 
   // Handle Google Sign In
   const handleGoogleSignIn = async () => {
@@ -91,7 +93,6 @@ const SignUp = () => {
       } else {
         navigate('/complete-profile');
       }
-
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed. Try again.');
     } finally {

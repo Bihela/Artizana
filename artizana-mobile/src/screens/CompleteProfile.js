@@ -14,6 +14,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSelectorModal from '../components/LanguageSelectorModal';
 
 // Handle Expo environment variables properly
 const EXPO_API_URL = Constants?.expoConfig?.extra?.apiBaseUrl;
@@ -34,6 +36,8 @@ export default function CompleteProfile({ navigation, route }) {
         shippingAddress: ''
     });
     const [profilePhoto, setProfilePhoto] = useState(null);
+    const [showLanguageModal, setShowLanguageModal] = useState(false);
+    const { selectLanguage } = useLanguage();
 
     useEffect(() => {
         fetchUser();
@@ -145,10 +149,7 @@ export default function CompleteProfile({ navigation, route }) {
             }
 
             Alert.alert('Success', 'Profile Updated Successfully!');
-
-            if (formData.role === 'Buyer') navigation.replace('MainTabs');
-            else if (formData.role === 'Artisan') navigation.replace('MainTabs');
-            else navigation.replace('NgoDashboard');
+            setShowLanguageModal(true);
 
         } catch (err) {
             console.log('Update error:', err);
@@ -157,6 +158,14 @@ export default function CompleteProfile({ navigation, route }) {
         } finally {
             setSaving(false);
         }
+    };
+
+    const handleSelectLanguage = (lang) => {
+        selectLanguage(lang);
+        setShowLanguageModal(false);
+        if (formData.role === 'Buyer') navigation.replace('MainTabs');
+        else if (formData.role === 'Artisan') navigation.replace('MainTabs');
+        else navigation.replace('NgoDashboard');
     };
 
     if (loading) return <View style={styles.center}><ActivityIndicator size="large" color="#10b981" /></View>;
@@ -210,6 +219,11 @@ export default function CompleteProfile({ navigation, route }) {
             <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={saving} testID="button-submit">
                 {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Complete Profile</Text>}
             </TouchableOpacity>
+
+            <LanguageSelectorModal
+                visible={showLanguageModal}
+                onSelectLanguage={handleSelectLanguage}
+            />
         </ScrollView>
     );
 }

@@ -17,10 +17,10 @@ describe('SignUp Component', () => {
   let mockNavigate;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     mockNavigate = jest.fn();
     useNavigate.mockReturnValue(mockNavigate);
     axios.post.mockResolvedValue({ data: { token: 'mock-token' } });
-    jest.clearAllMocks();
   });
 
   test('renders form fields', () => {
@@ -43,6 +43,7 @@ describe('SignUp Component', () => {
     fireEvent.click(screen.getByLabelText(/I agree to the Terms & Conditions/i));
     fireEvent.click(screen.getByText('Sign Up with Email'));
 
+    // Now axios.post should be called directly
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
         expect.any(String),
@@ -53,6 +54,11 @@ describe('SignUp Component', () => {
           role: 'Buyer',
         })
       );
+    });
+
+    // And navigation should go to /buyer-dashboard
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/complete-profile');
     });
   });
 });

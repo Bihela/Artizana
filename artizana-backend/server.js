@@ -69,7 +69,6 @@ app.use('/api/ngo-applications', ngoApplicationRoutes);
 // ===== Health Check =====
 app.get('/', (req, res) => res.json({ message: 'Artizana Backend Running' }));
 
-// ===== Start Server =====
 const PORT = process.env.PORT || 5001;
 if (require.main === module) {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

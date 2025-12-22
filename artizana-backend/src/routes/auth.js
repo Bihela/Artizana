@@ -11,7 +11,6 @@ const { uploadFileToFirebase } = require('../utils/uploadToFirebase');
 const upload = multer({ storage: multer.memoryStorage() });
 
 const client = new OAuth2Client(); // Client ID will be verified during verifyIdToken call if we pass it, or we just trust Google for now and check payload manually for robustness.
-
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 // ===== STANDARD AUTH =====
@@ -163,6 +162,7 @@ router.get(
   }
 );
 
+
 // ===== GOOGLE AUTH (WEB POPUP) =====
 /**
  * Verifies Google ID Token from frontend (Firebase/GIS)
@@ -237,6 +237,7 @@ router.post('/google-web', async (req, res) => {
   }
 });
 
+
 // ===== UPDATE ROLE (For Google Auth First Time) =====
 router.put('/update-role', async (req, res) => {
   try {
@@ -277,6 +278,7 @@ router.put('/update-role', async (req, res) => {
     res.status(500).json({ error: 'Failed to update role' });
   }
 });
+
 
 // ===== GET CURRENT USER (ME) =====
 router.get('/me', async (req, res) => {
@@ -377,6 +379,7 @@ router.put('/update-profile', upload.single('profilePhoto'), async (req, res) =>
     res.status(500).json({ error: 'Failed to update profile' });
   }
 });
+
 
 // Attach to routes
 router.post('/register', registerHandler);

@@ -12,6 +12,6 @@ describe('Login Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Artizana Login/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Artizana Login/i })).toBeInTheDocument();
   });
 });
