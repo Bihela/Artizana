@@ -58,8 +58,7 @@ export default function SignUp({ navigation }) {
       });
 
       Alert.alert('Success', 'Account created successfully!');
-      // TODO: Navigate based on role later
-      navigation.replace('Home'); // or Login / Profile
+      navigation.replace('Login');
     } catch (err) {
       const errMsg =
         err.response?.data?.error ||

@@ -57,12 +57,8 @@ const Login = () => {
       const role = user?.role || "Buyer";
 
       // Match the web dashboard routes concept - KAN-6
-      if (role === "Buyer") {
+      if (role === "Buyer" || role === "Artisan" || role === "NGO/Edu Partner") {
         navigation.replace("MainTabs");
-      } else if (role === "Artisan") {
-        navigation.replace("ArtisanDashboard");
-      } else if (role === "NGO/Edu Partner") {
-        navigation.replace("NgoDashboard");
       } else {
         setError("Unknown role. Contact support.");
       }
