@@ -237,7 +237,7 @@ router.post('/google-web', async (req, res) => {
   }
 });
 
->>>>>>> dev
+
 // ===== UPDATE ROLE (For Google Auth First Time) =====
 router.put('/update-role', async (req, res) => {
   try {
@@ -380,7 +380,7 @@ router.put('/update-profile', upload.single('profilePhoto'), async (req, res) =>
   }
 });
 
->>>>>>> dev
+
 // Attach to routes
 router.post('/register', registerHandler);
 router.post('/login', loginHandler);

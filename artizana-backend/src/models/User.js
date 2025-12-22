@@ -8,11 +8,6 @@ const userSchema = new mongoose.Schema({
   googleId: { type: String, unique: true, sparse: true },
   role: { type: String, enum: ['Buyer', 'Artisan', 'NGO/Edu Partner', 'Admin'], default: null },
   profilePhoto: String,
-<<<<<<< HEAD
-}, { timestamps: true });
-
-userSchema.pre('save', async function(next) {
-=======
 
   // Artisan specific
   bio: { type: String, trim: true },
@@ -24,18 +19,13 @@ userSchema.pre('save', async function(next) {
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
->>>>>>> dev
   if (this.isModified('password') && this.password) {
     this.password = await bcrypt.hash(this.password, 12);
   }
   next();
 });
 
-<<<<<<< HEAD
-userSchema.methods.comparePassword = async function(candidatePassword) {
-=======
 userSchema.methods.comparePassword = async function (candidatePassword) {
->>>>>>> dev
   if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };

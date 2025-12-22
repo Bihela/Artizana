@@ -58,7 +58,7 @@ describe('SignUp Component', () => {
 
     // And navigation should go to /buyer-dashboard
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/buyer-dashboard');
+      expect(mockNavigate).toHaveBeenCalledWith('/complete-profile');
     });
   });
 });

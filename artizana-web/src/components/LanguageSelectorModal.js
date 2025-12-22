@@ -2,8 +2,8 @@
 import React from 'react';
 
 const LANGUAGES = [
-  { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'si', label: 'සිංහල', flag: '🇱🇰' },
+  { code: 'en', label: 'English', flagUrl: 'https://flagcdn.com/w80/gb.png' },
+  { code: 'si', label: 'සිංහල', flagUrl: 'https://flagcdn.com/w80/lk.png' },
 ];
 
 export default function LanguageSelectorModal({ onSelect }) {
@@ -24,10 +24,14 @@ export default function LanguageSelectorModal({ onSelect }) {
             <button
               key={lang.code}
               onClick={() => onSelect(lang.code)}
-              className="w-full border border-gray-200 rounded-full py-3 px-4 flex items-center justify-center gap-2 hover:bg-green-50 hover:border-green-400 transition"
+              className="w-full border border-gray-200 rounded-full py-3 px-4 flex items-center justify-center gap-3 hover:bg-green-50 hover:border-green-400 transition group"
             >
-              <span className="text-lg">{lang.flag}</span>
-              <span className="font-medium text-gray-800">{lang.label}</span>
+              <img
+                src={lang.flagUrl}
+                alt={`${lang.label} flag`}
+                className="w-6 h-4 object-cover shadow-sm border border-gray-100 rounded-sm"
+              />
+              <span className="font-medium text-gray-800 group-hover:text-green-700">{lang.label}</span>
             </button>
           ))}
         </div>

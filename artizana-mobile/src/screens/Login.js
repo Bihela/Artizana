@@ -34,9 +34,6 @@ const Login = () => {
 
     if (email === "test@example.com" && password === "password123") {
       // skip axios and just navigate
-<<<<<<< HEAD
-      navigation.replace("BuyerDashboard");
-=======
       // Set default test role as Buyer
       await AsyncStorage.setItem("role", "Buyer");
       navigation.replace("MainTabs");
@@ -46,7 +43,6 @@ const Login = () => {
     if (email === "artisan@test.com" && password === "123456") {
       await AsyncStorage.setItem("role", "Artisan");
       navigation.replace("MainTabs");
->>>>>>> dev
       return;
     }
 
@@ -68,15 +64,6 @@ const Login = () => {
 
       const role = user?.role || "Buyer";
 
-<<<<<<< HEAD
-      // Match the web dashboard routes concept - KAN-6
-      if (role === "Buyer") {
-        navigation.replace("BuyerDashboard");
-      } else if (role === "Artisan") {
-        navigation.replace("ArtisanDashboard");
-      } else if (role === "NGO/Edu Partner") {
-        navigation.replace("NgoDashboard");
-=======
       let isComplete = false;
       if (role === 'Buyer') {
         if (user.phoneNumber && user.shippingAddress) isComplete = true;
@@ -89,7 +76,6 @@ const Login = () => {
       // Navigate based on completeness
       if (!isComplete) {
         navigation.replace("CompleteProfile");
->>>>>>> dev
       } else {
         // Match the web dashboard routes concept - KAN-6
         if (role === "Buyer" || role === "Artisan" || role === "NGO/Edu Partner") {
