@@ -146,8 +146,8 @@ export default function CompleteProfile({ navigation, route }) {
 
             Alert.alert('Success', 'Profile Updated Successfully!');
 
-            if (formData.role === 'Buyer') navigation.replace('BuyerDashboard');
-            else if (formData.role === 'Artisan') navigation.replace('ArtisanDashboard');
+            if (formData.role === 'Buyer') navigation.replace('MainTabs');
+            else if (formData.role === 'Artisan') navigation.replace('MainTabs');
             else navigation.replace('NgoDashboard');
 
         } catch (err) {

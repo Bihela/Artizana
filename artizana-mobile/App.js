@@ -14,6 +14,9 @@ import ArtisanDashboard from './src/screens/ArtisanDashboard';
 import NgoDashboard from './src/screens/NgoDashboard';
 import CompleteProfile from './src/screens/CompleteProfile';
 
+// KAN-91: Navigation
+import TabNavigator from './src/navigation/TabNavigator';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -48,6 +51,13 @@ export default function App() {
           component={CompleteProfile}
           options={{ title: 'Complete Profile' }}
         />
+        <Stack.Screen
+          name="MainTabs"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+
+        {/* Keeping old dashboard routes for reference or other roles */}
         <Stack.Screen
           name="BuyerDashboard"
           component={BuyerDashboard}

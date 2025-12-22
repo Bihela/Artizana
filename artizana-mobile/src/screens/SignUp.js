@@ -82,10 +82,6 @@ export default function SignUp({ navigation }) {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    Alert.alert('Coming Soon', 'Google Sign-In will be available soon!');
-  };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Artizana</Text>
@@ -149,12 +145,6 @@ export default function SignUp({ navigation }) {
 
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
         <Text style={styles.signUpButtonText}>Sign Up</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.or}>or</Text>
-
-      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
-        <Text style={styles.googleButtonText}>Continue with Google</Text>
       </TouchableOpacity>
 
       {/* CLICKABLE NGO LINK */}
@@ -263,25 +253,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  googleButton: {
-    backgroundColor: '#4285f4',
-    paddingVertical: 14,
-    borderRadius: 12,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  googleButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  or: {
-    textAlign: 'center',
-    color: '#9ca3af',
-    marginVertical: 20,
-    fontSize: 14,
   },
   ngoLink: {
     marginTop: 24,

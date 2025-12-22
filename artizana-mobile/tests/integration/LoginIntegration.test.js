@@ -68,7 +68,7 @@ describe("Login Integration", () => {
     // expect(mockNavigate).toHaveBeenCalledWith("BuyerDashboard");
   });
 
-  it("bypasses API with test credentials", () => {
+  it("bypasses API with test credentials", async () => {
     render(<Login />);
 
     fireEvent.changeText(
@@ -82,7 +82,9 @@ describe("Login Integration", () => {
 
     fireEvent.press(screen.getByTestId("loginButton"));
 
-    expect(mockReplace).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalled();
+    });
     expect(axios.post).not.toHaveBeenCalled();
   });
 });

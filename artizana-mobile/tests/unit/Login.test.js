@@ -46,7 +46,7 @@ describe("Login Component", () => {
     ).toBeTruthy();
   });
 
-  test("test credentials navigate without API", () => {
+  test("test credentials navigate without API", async () => {
     render(<Login />);
 
     fireEvent.changeText(
@@ -61,7 +61,11 @@ describe("Login Component", () => {
     fireEvent.press(screen.getByTestId("loginButton"));
 
     // just check that some navigation happened
-    expect(mockReplace).toHaveBeenCalled();
+    // Use waitFor because handleLogin is now async
+    const { waitFor } = require("@testing-library/react-native");
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalled();
+    });
     // the important part for the assignment
     expect(axios.post).not.toHaveBeenCalled();
   });

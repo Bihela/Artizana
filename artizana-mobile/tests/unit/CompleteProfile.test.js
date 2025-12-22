@@ -88,7 +88,7 @@ describe('CompleteProfile Screen', () => {
 
         await waitFor(() => {
             expect(axios.put).toHaveBeenCalled();
-            expect(mockNavigation.replace).toHaveBeenCalledWith('BuyerDashboard');
+            expect(mockNavigation.replace).toHaveBeenCalledWith('MainTabs');
         });
     });
 });
