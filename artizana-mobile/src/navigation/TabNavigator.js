@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     HomeIcon,
-    Squares2X2Icon,
+    ShoppingBagIcon,
     ClipboardDocumentListIcon,
-    ChartBarIcon,
+    AcademicCapIcon,
     UserCircleIcon
 } from 'react-native-heroicons/outline';
 import {
@@ -18,10 +19,20 @@ import {
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+    const [role, setRole] = useState('Buyer');
+
+    useEffect(() => {
+        const fetchRole = async () => {
+            const savedRole = await AsyncStorage.getItem('role');
+            if (savedRole) setRole(savedRole);
+        };
+        fetchRole();
+    }, []);
+
     return (
         <Tab.Navigator
             screenOptions={{
-                headerShown: false, // We are using our custom TopBar inside screens
+                headerShown: false,
                 tabBarStyle: {
                     backgroundColor: '#ffffff',
                     borderTopWidth: 1,
@@ -44,27 +55,37 @@ const TabNavigator = () => {
                     tabBarIcon: ({ color, size }) => <HomeIcon color={color} size={size} />
                 }}
             />
-            <Tab.Screen
-                name="Products"
-                component={ProductsScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => <Squares2X2Icon color={color} size={size} />
-                }}
-            />
+
+            {/* Only visible to Artisan - KAN-91 */}
+            {role === 'Artisan' && (
+                <Tab.Screen
+                    name="Sell"
+                    component={ProductsScreen}
+                    options={{
+                        tabBarLabel: 'My Shop',
+                        tabBarIcon: ({ color, size }) => <ShoppingBagIcon color={color} size={size} />
+                    }}
+                />
+            )}
+
             <Tab.Screen
                 name="Orders"
                 component={OrdersScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => <ClipboardDocumentListIcon color={color} size={size} />
+                    tabBarIcon: ({ color, size }) => <ClipboardDocumentListIcon color={color} size={size} />,
+                    tabBarBadge: 3, // Badge support - KAN-91
                 }}
             />
+
             <Tab.Screen
-                name="Analytics"
+                name="Learn"
                 component={AnalyticsScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => <ChartBarIcon color={color} size={size} />
+                    tabBarLabel: 'Workshops',
+                    tabBarIcon: ({ color, size }) => <AcademicCapIcon color={color} size={size} />
                 }}
             />
+
             <Tab.Screen
                 name="Profile"
                 component={ProfileScreen}

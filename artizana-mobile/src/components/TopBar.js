@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Bars3Icon, Cog6ToothIcon } from "react-native-heroicons/outline";
+import { BellIcon, Bars3Icon } from "react-native-heroicons/outline";
 
 const TopBar = () => {
     return (
@@ -13,8 +13,8 @@ const TopBar = () => {
 
                 <Text style={styles.title}>Artizana</Text>
 
-                <TouchableOpacity style={styles.iconBtn} testID="settings-button">
-                    <Cog6ToothIcon size={24} color="#374151" />
+                <TouchableOpacity style={styles.iconBtn} testID="notifications-button">
+                    <BellIcon size={24} color="#374151" />
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

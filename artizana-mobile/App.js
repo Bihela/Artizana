@@ -10,7 +10,9 @@ import Login from './src/screens/Login';
 // KAN 6: add your role dashboards
 import BuyerDashboard from './src/screens/BuyerDashboard';
 import ArtisanDashboard from './src/screens/ArtisanDashboard';
+
 import NgoDashboard from './src/screens/NgoDashboard';
+import CompleteProfile from './src/screens/CompleteProfile';
 
 // KAN-91: Navigation
 import TabNavigator from './src/navigation/TabNavigator';
@@ -42,6 +44,13 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
+
+
+        <Stack.Screen
+          name="CompleteProfile"
+          component={CompleteProfile}
+          options={{ title: 'Complete Profile' }}
+        />
         <Stack.Screen
           name="MainTabs"
           component={TabNavigator}
