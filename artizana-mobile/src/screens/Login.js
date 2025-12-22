@@ -34,6 +34,14 @@ const Login = () => {
 
     if (email === "test@example.com" && password === "password123") {
       // skip axios and just navigate
+      // Set default test role as Buyer
+      await AsyncStorage.setItem("role", "Buyer");
+      navigation.replace("MainTabs");
+      return;
+    }
+
+    if (email === "artisan@test.com" && password === "123456") {
+      await AsyncStorage.setItem("role", "Artisan");
       navigation.replace("MainTabs");
       return;
     }

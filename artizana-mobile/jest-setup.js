@@ -29,6 +29,14 @@ jest.mock("nativewind", () => {
     };
 });
 
+// AsyncStorage mock
+jest.mock('@react-native-async-storage/async-storage', () => ({
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+}));
+
 // Heroicons mock
 jest.mock("react-native-heroicons/outline", () => {
     const React = require("react");
@@ -50,5 +58,7 @@ jest.mock("react-native-heroicons/outline", () => {
         ClipboardDocumentListIcon: MockIcon("ClipboardDocumentListIcon"),
         ChartBarIcon: MockIcon("ChartBarIcon"),
         UserCircleIcon: MockIcon("UserCircleIcon"),
+        ShoppingBagIcon: MockIcon("ShoppingBagIcon"),
+        AcademicCapIcon: MockIcon("AcademicCapIcon"),
     };
 });

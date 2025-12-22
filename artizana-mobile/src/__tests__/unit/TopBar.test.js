@@ -23,6 +23,6 @@ describe('<TopBar />', () => {
         const { getByTestId } = render(<TopBar />);
 
         expect(getByTestId('menu-button')).toBeTruthy();
-        expect(getByTestId('settings-button')).toBeTruthy();
+        expect(getByTestId('notifications-button')).toBeTruthy();
     });
 });
