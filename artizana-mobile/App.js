@@ -13,12 +13,6 @@ import BuyerDashboard from './src/screens/BuyerDashboard';
 import ArtisanDashboard from './src/screens/ArtisanDashboard';
 import NgoDashboard from './src/screens/NgoDashboard';
 import { LanguageProvider } from './src/context/LanguageContext';
-
-// KAN 6: add your role dashboards
-import BuyerDashboard from './src/screens/BuyerDashboard';
-import ArtisanDashboard from './src/screens/ArtisanDashboard';
-
-import NgoDashboard from './src/screens/NgoDashboard';
 import CompleteProfile from './src/screens/CompleteProfile';
 
 // KAN-91: Navigation
@@ -30,7 +24,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="SignUp">
           <Stack.Screen
             name="Home"
             component={HomeScreen}
