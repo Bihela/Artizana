@@ -15,17 +15,18 @@ jest.doMock('react-router-dom', () => {
 });
 
 // NOW import SignUp — AFTER mock
+// eslint-disable-next-line global-require
 const SignUp = require('../../pages/SignUp').default;
 
 jest.mock('axios');
 
 describe('SignUp Integration', () => {
   beforeEach(() => {
-    axios.post.mockResolvedValue({ data: { token: 'mock-token' } });
     jest.clearAllMocks();
+    axios.post.mockResolvedValue({ data: { token: 'mock-token' } });
   });
 
-  test('navigates to buyer-dashboard on successful signup', async () => {
+  test('navigates to dashboard on successful signup', async () => {
     render(
       <MemoryRouter>
         <SignUp />
@@ -40,8 +41,11 @@ describe('SignUp Integration', () => {
     fireEvent.click(screen.getByLabelText(/I agree to the Terms & Conditions/i));
     fireEvent.click(screen.getByText('Sign Up with Email'));
 
+
+
+    // Expect navigation to /buyer-dashboard since role is Buyer
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/buyer-dashboard');
+      expect(mockNavigate).toHaveBeenCalledWith('/complete-profile');
     });
   });
 });

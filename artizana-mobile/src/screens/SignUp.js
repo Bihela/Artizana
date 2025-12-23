@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import Constants from 'expo-constants';
 
@@ -57,9 +56,21 @@ export default function SignUp({ navigation }) {
         role,
       });
 
+      // Save token and role to storage so CompleteProfile can use 'me'
+      const { token, user } = response.data;
+      if (token) {
+        // Import AsyncStorage if not already imported, or verify imports
+        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+        await AsyncStorage.setItem('token', token);
+        if (user && user.role) {
+          await AsyncStorage.setItem('role', user.role);
+        }
+      }
+
       Alert.alert('Success', 'Account created successfully!');
-      // TODO: Navigate based on role later
-      navigation.replace('Home'); // or Login / Profile
+
+      // Navigate to CompleteProfile regardless of role initially
+      navigation.replace('CompleteProfile');
     } catch (err) {
       const errMsg =
         err.response?.data?.error ||
@@ -69,10 +80,6 @@ export default function SignUp({ navigation }) {
       setError(errMsg);
       Alert.alert('Error', errMsg);
     }
-  };
-
-  const handleGoogleSignIn = () => {
-    Alert.alert('Coming Soon', 'Google Sign-In will be available soon!');
   };
 
   return (
@@ -112,28 +119,32 @@ export default function SignUp({ navigation }) {
       />
 
       <Text style={styles.label}>Select Role</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={role}
-          onValueChange={(itemValue) => setRole(itemValue)}
-          style={styles.picker}
-        >
-          {roles.map((r) => (
-            <Picker.Item key={r} label={r} value={r} />
-          ))}
-        </Picker>
+      <View style={styles.roleContainer}>
+        {roles.map((r) => (
+          <TouchableOpacity
+            key={r}
+            style={[
+              styles.roleButton,
+              role === r && styles.selectedRoleButton,
+            ]}
+            onPress={() => setRole(r)}
+          >
+            <Text
+              style={[
+                styles.roleButtonText,
+                role === r && styles.selectedRoleButtonText,
+              ]}
+            >
+              {r}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
         <Text style={styles.signUpButtonText}>Sign Up</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.or}>or</Text>
-
-      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
-        <Text style={styles.googleButtonText}>Continue with Google</Text>
       </TouchableOpacity>
 
       {/* CLICKABLE NGO LINK */}
@@ -198,16 +209,32 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     color: '#374151',
   },
-  pickerContainer: {
+  roleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    gap: 12,
+  },
+  roleButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#e5e7eb',
-    borderRadius: 12,
-    marginBottom: 16,
-    overflow: 'hidden',
     backgroundColor: 'white',
+    alignItems: 'center',
   },
-  picker: {
-    height: 50,
+  selectedRoleButton: {
+    borderColor: '#10b981',
+    backgroundColor: '#ecfdf5',
+  },
+  roleButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6b7280',
+  },
+  selectedRoleButtonText: {
+    color: '#10b981',
   },
   error: {
     color: '#ef4444',
@@ -226,25 +253,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  googleButton: {
-    backgroundColor: '#4285f4',
-    paddingVertical: 14,
-    borderRadius: 12,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  googleButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  or: {
-    textAlign: 'center',
-    color: '#9ca3af',
-    marginVertical: 20,
-    fontSize: 14,
   },
   ngoLink: {
     marginTop: 24,

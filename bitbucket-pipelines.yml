@@ -60,6 +60,16 @@ definitions:
 
 
 pipelines:
+  pull-requests:
+    '**': # Runs on all Pull Requests
+      - parallel:
+          - step: *install-backend
+          - step: *install-mobile
+          - step: *install-web
+      - parallel:
+          - step: *test-backend
+          - step: *test-mobile
+          - step: *test-web-unit
 
   branches:
     dev:
