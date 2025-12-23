@@ -4,7 +4,7 @@ import TopBar from './TopBar';
 
 const Layout = () => {
     const location = useLocation();
-    const hideTopBarPaths = ['/login', '/signup', '/', '/ngoapply', '/ngo-success', '/complete-profile'];
+    const hideTopBarPaths = ['/login', '/signup', '/ngoapply', '/ngo-success', '/complete-profile'];
     const shouldHideTopBar = hideTopBarPaths.includes(location.pathname);
 
     return (

@@ -12,6 +12,13 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
     setItem: jest.fn(),
     removeItem: jest.fn(),
 }));
+jest.mock('expo-constants', () => ({
+    expoConfig: {
+        extra: {
+            apiBaseUrl: 'http://localhost:5001/api'
+        }
+    }
+}));
 
 const mockNavigation = {
     replace: jest.fn(),
