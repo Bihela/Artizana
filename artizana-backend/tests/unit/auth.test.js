@@ -1,5 +1,5 @@
 // tests/unit/auth.test.js
-const { registerHandler, loginHandler } = require('../../src/routes/auth');
+const { registerHandler, loginHandler, getProfileHandler } = require('../../src/routes/auth');
 const User = require('../../src/models/User');
 const jwt = require('jsonwebtoken');
 const { initCasbin } = require('../../src/config/casbin');
@@ -85,7 +85,60 @@ describe('Auth Controller - Unit - Login', () => {
         name: 'Login User',
         email: 'login@example.com',
         role: 'Buyer',
+        email: 'login@example.com',
+        role: 'Buyer',
+        profilePhoto: undefined, // undefined because mock didn't have it, but consistent with structure
       },
     });
+  });
+});
+
+describe('Auth Controller - Unit - Get Profile', () => {
+  let req, res;
+
+  beforeEach(() => {
+    req = {
+      headers: { authorization: 'Bearer mock-token' }
+    };
+    res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    jwt.verify.mockReturnValue({ id: 'mockId' });
+    User.findById.mockResolvedValue({
+      _id: 'mockId',
+      name: 'Profile User',
+      email: 'profile@example.com',
+      role: 'Buyer',
+      profilePhoto: 'http://example.com/photo.jpg'
+    });
+  });
+
+  test('returns user profile successfully', async () => {
+    await getProfileHandler(req, res);
+
+    expect(User.findById).toHaveBeenCalledWith('mockId');
+    expect(res.json).toHaveBeenCalledWith({
+      user: {
+        id: 'mockId',
+        name: 'Profile User',
+        email: 'profile@example.com',
+        role: 'Buyer',
+        profilePhoto: 'http://example.com/photo.jpg',
+        recentActivity: [],
+      }
+    });
+  });
+
+  test('returns 401 if no token provided', async () => {
+    req.headers.authorization = undefined;
+    await getProfileHandler(req, res);
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({ error: 'No token provided' });
+  });
+
+  test('returns 404 if user not found', async () => {
+    User.findById.mockResolvedValue(null);
+    await getProfileHandler(req, res);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
   });
 });

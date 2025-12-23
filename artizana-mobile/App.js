@@ -6,6 +6,7 @@ import SignUp from './src/screens/SignUp';
 import NGOApplyScreen from './src/screens/NGOApplyScreen';
 import NGOApplicationSuccessScreen from './src/screens/NGOApplicationSuccessScreen';
 import Login from './src/screens/Login';
+import ProfileScreen from './src/screens/ProfileScreen';
 import HomeScreen from './src/screens/HomeScreen';
 
 // KAN 6: add your role dashboards
@@ -49,6 +50,11 @@ export default function App() {
             name="NGOApplicationSuccess"
             component={NGOApplicationSuccessScreen}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{ title: 'My Profile' }}
           />
 
           <Stack.Screen

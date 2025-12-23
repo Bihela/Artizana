@@ -12,9 +12,9 @@ import {
     HomeScreen,
     ProductsScreen,
     OrdersScreen,
-    AnalyticsScreen,
-    ProfileScreen
+    AnalyticsScreen
 } from '../screens/Placeholders';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 

@@ -11,8 +11,8 @@ const API_BASE_URL =
 function Login() {
 
 
-  const [email, setEmail] = useState("buyer@example.com");
-  const [password, setPassword] = useState("Password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
@@ -140,7 +140,7 @@ function Login() {
             <label className="block text-sm text-gray-700 mb-1">Email</label>
             <input
               type="email"
-              placeholder="buyer@example.com"
+              placeholder="Enter your email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               className="w-full p-2 border border-gray-300 rounded bg-gray-50"
@@ -153,7 +153,7 @@ function Login() {
             </label>
             <input
               type="password"
-              placeholder="Password123"
+              placeholder="Enter your password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="w-full p-2 border border-gray-300 rounded bg-gray-50"

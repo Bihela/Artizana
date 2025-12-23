@@ -7,12 +7,10 @@ const Home = () => {
     const handleLanguageSelect = (languageCode) => {
         console.log('Selected language:', languageCode);
         setIsModalOpen(false);
-        // You can add logic here to save the selection to local storage or context if needed
     };
 
     return (
-        <div className="h-screen w-full bg-white">
-            {/* Home page is intentionally left blank for now */}
+        <div className="h-full w-full bg-white flex items-center justify-center min-h-[calc(100vh-64px)]">
             {isModalOpen && <LanguageSelectorModal onSelect={handleLanguageSelect} />}
         </div>
     );

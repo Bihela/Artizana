@@ -85,7 +85,7 @@ const SignUp = () => {
         role,
       });
 
-      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('authToken', res.data.token);
 
       if (role) {
         // Even if role is selected, we need to complete profile (bio, etc.)

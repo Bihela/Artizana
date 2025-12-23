@@ -279,9 +279,10 @@ router.put('/update-role', async (req, res) => {
   }
 });
 
-
-// ===== GET CURRENT USER (ME) =====
-router.get('/me', async (req, res) => {
+/**
+ * Get Profile Handler
+ */
+const getProfileHandler = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'No token provided' });
@@ -301,14 +302,18 @@ router.get('/me', async (req, res) => {
         location: user.location,
         phoneNumber: user.phoneNumber,
         shippingAddress: user.shippingAddress,
-        profilePhoto: user.profilePhoto
+        profilePhoto: user.profilePhoto,
+        // Placeholder for activity - to be implemented fully later
+        recentActivity: [],
       }
     });
   } catch (err) {
-    console.error('Get me error:', err);
-    res.status(500).json({ error: 'Failed to fetch user' });
+    console.error('Get Profile error:', err);
+    res.status(401).json({ error: 'Invalid token' });
   }
-});
+};
+
+router.get('/me', getProfileHandler);
 
 // ===== UPDATE PROFILE =====
 router.put('/update-profile', upload.single('profilePhoto'), async (req, res) => {
@@ -380,10 +385,9 @@ router.put('/update-profile', upload.single('profilePhoto'), async (req, res) =>
   }
 });
 
-
 // Attach to routes
 router.post('/register', registerHandler);
 router.post('/login', loginHandler);
 
-// EXPORT BOTH — Frontend uses /api/auth/* → Tests can import handlers directly
-module.exports = { router, registerHandler, loginHandler };
+// EXPORT ALL
+module.exports = { router, registerHandler, loginHandler, getProfileHandler };

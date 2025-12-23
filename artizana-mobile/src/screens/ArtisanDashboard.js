@@ -1,11 +1,22 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ArtisanDashboard() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Artisan Dashboard</Text>
       <Text style={styles.text}>Welcome Artisan 🎨</Text>
+
+      {/* Temporary Navigation Button */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Profile")}
+      >
+        <Text style={styles.buttonText}>View Profile (Temp)</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -25,5 +36,17 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: "#6B7280",
+    marginBottom: 30,
+  },
+  button: {
+    backgroundColor: "#10B981",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "600",
   },
 });
