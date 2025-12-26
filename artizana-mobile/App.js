@@ -15,6 +15,7 @@ import ArtisanDashboard from './src/screens/ArtisanDashboard';
 import NgoDashboard from './src/screens/NgoDashboard';
 import { LanguageProvider } from './src/context/LanguageContext';
 import CompleteProfile from './src/screens/CompleteProfile';
+import AddProductScreen from './src/screens/AddProductScreen';
 
 // KAN-91: Navigation
 import TabNavigator from './src/navigation/TabNavigator';
@@ -61,6 +62,11 @@ export default function App() {
             name="CompleteProfile"
             component={CompleteProfile}
             options={{ title: 'Complete Profile' }}
+          />
+          <Stack.Screen
+            name="AddProduct"
+            component={AddProductScreen}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="MainTabs"

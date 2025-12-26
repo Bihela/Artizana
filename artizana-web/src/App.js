@@ -8,6 +8,7 @@ import NGOApplicationSuccess from './pages/NGOApplicationSuccess';
 import NGOApplyForm from './pages/NGOApplyForm';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import AddProduct from './pages/AddProduct';
 
 
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/ngoapply" element={<NGOApplyForm />} />
           <Route path="/ngo-success" element={<NGOApplicationSuccess />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/add-product" element={<AddProduct />} />
 
           {/* KAN-6 role based dashboards - Temporarily showing Profile page */}
           <Route path="/buyer-dashboard" element={<Profile />} />

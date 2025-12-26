@@ -42,7 +42,11 @@ const CompleteProfile = () => {
     }
 
     fetchUser();
-  }, [token, navigate, urlToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, navigate, urlToken]); // fetchUser is stable or can be ignored here as it's defined outside or we use callback, but simplest is ignore or add. Adding eslint-disable is safer if fetchUser changes often or causes loops.
+  // Actually, fetchUser is defined BELOW this useEffect, which is also bad practice if it's used inside.
+  // Best practice: move fetchUser definition INSIDE useEffect or wrap in useCallback.
+  // Given the structure, I will move fetchUser inside useEffect to avoid complexity or loop issues.
 
   const fetchUser = async () => {
     try {

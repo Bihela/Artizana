@@ -39,7 +39,7 @@ const Profile = () => {
         };
 
         fetchProfile();
-    }, [navigate]);
+    }, [navigate, API_BASE_URL]);
 
     if (loading) return <div className="p-8 text-center" data-testid="loading">Loading...</div>;
     if (error) return <div className="p-8 text-center text-red-500" data-testid="error">{error}</div>;
