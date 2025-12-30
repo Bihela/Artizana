@@ -7,11 +7,40 @@ const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const multer = require('multer');
 const { uploadFileToFirebase } = require('../utils/uploadToFirebase');
+const firebaseAdmin = require('../config/firebaseAdmin');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 const client = new OAuth2Client(); // Client ID will be verified during verifyIdToken call if we pass it, or we just trust Google for now and check payload manually for robustness.
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+// ===== FIREBASE CUSTOM TOKEN =====
+router.get('/firebase-token', async (req, res) => {
+  try {
+    if (!firebaseAdmin) {
+      return res.status(503).json({ error: 'Firebase Admin not configured' });
+    }
+
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Normalize id
+    const userId = decoded.id || decoded._id;
+
+    // Create Custom Token with user ID and claims
+    const additionalClaims = {
+      role: decoded.role
+    };
+
+    const customToken = await firebaseAdmin.auth().createCustomToken(userId, additionalClaims);
+    res.json({ token: customToken });
+
+  } catch (err) {
+    console.error('Error generating Firebase token:', err);
+    res.status(500).json({ error: 'Failed to generate token' });
+  }
+});
 
 // ===== STANDARD AUTH =====
 
@@ -38,6 +67,7 @@ const registerHandler = async (req, res) => {
       password,
       role
     });
+    // TODO: Send verification email check uszer creation
 
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },

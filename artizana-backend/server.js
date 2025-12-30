@@ -65,6 +65,8 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/auth', authRouter);
 const ngoApplicationRoutes = require('./src/routes/ngoApplication');
 app.use('/api/ngo-applications', ngoApplicationRoutes);
+const productRoutes = require('./src/routes/product');
+app.use('/api/products', productRoutes);
 
 // ===== Health Check =====
 app.get('/', (req, res) => res.json({ message: 'Artizana Backend Running' }));
