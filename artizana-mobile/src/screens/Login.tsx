@@ -85,7 +85,7 @@ const Login = () => {
           setError("Unknown role. Contact support.");
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       const message =
         err.response?.data?.error ||
         err.response?.data?.message ||

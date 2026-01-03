@@ -29,9 +29,9 @@ export default function NGOApplyScreen({ navigation }: { navigation: any }) {
     mission: '',
   });
 
-  const [logo, setLogo] = useState(null);
-  const [certificate, setCertificate] = useState(null);
-  const [proof, setProof] = useState(null);
+  const [logo, setLogo] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [certificate, setCertificate] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [proof, setProof] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [loading, setLoading] = useState(false);
 
   const pickFile = async (setter: any, allowedTypes = ['image/*', 'application/pdf']) => {
@@ -44,7 +44,7 @@ export default function NGOApplyScreen({ navigation }: { navigation: any }) {
       if (res.canceled) return;
 
       const file = res.assets[0];
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size && file.size > 5 * 1024 * 1024) {
         Alert.alert('File too large', 'Please select a file under 5MB');
         return;
       }
@@ -110,7 +110,7 @@ export default function NGOApplyScreen({ navigation }: { navigation: any }) {
 
       Alert.alert('Success!', 'Application submitted successfully!');
       navigation.replace('NGOApplicationSuccess');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Upload error:', err.message);
       Alert.alert(
         'Upload Failed',

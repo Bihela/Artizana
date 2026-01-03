@@ -10,7 +10,7 @@ import axios from 'axios';
 export default function AddProductScreen() {
     const navigation = useNavigation<any>();
     const [loading, setLoading] = useState(false);
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
     const [formData, setFormData] = useState({
         title: '',
         description: '',

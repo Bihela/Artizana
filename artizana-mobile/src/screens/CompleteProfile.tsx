@@ -35,7 +35,7 @@ export default function CompleteProfile({ navigation, route }: { navigation: any
         phoneNumber: '',
         shippingAddress: ''
     });
-    const [profilePhoto, setProfilePhoto] = useState(null);
+    const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
     const [showLanguageModal, setShowLanguageModal] = useState(false);
     const { selectLanguage } = useLanguage();
 
@@ -71,7 +71,7 @@ export default function CompleteProfile({ navigation, route }: { navigation: any
                 setProfilePhoto(user.profilePhoto);
             }
             setLoading(false);
-        } catch (err) {
+        } catch (err: any) {
             console.log('Error fetching user:', err);
             setLoading(false);
             Alert.alert('Error', 'Failed to fetch user data. Please login again.');
@@ -129,9 +129,9 @@ export default function CompleteProfile({ navigation, route }: { navigation: any
             }
 
             if (profilePhoto && !profilePhoto.startsWith('http')) {
-                let filename = profilePhoto.split('/').pop();
-                let match = /\.(\w+)$/.exec(filename);
-                let type = match ? `image/${match[1]}` : `image`;
+                const filename = profilePhoto.split('/').pop() || 'photo.jpg';
+                const match = /\.(\w+)$/.exec(filename);
+                const type = match ? `image/${match[1]}` : `image/jpeg`;
 
                 // Fix for Android file path issues if necessary, but usually expo handles uri fine
                 data.append('profilePhoto', { uri: profilePhoto, name: filename, type } as any);
@@ -151,7 +151,7 @@ export default function CompleteProfile({ navigation, route }: { navigation: any
             Alert.alert('Success', 'Profile Updated Successfully!');
             setShowLanguageModal(true);
 
-        } catch (err) {
+        } catch (err: any) {
             console.log('Update error:', err);
             const msg = err.response?.data?.error || 'Failed to update profile. Please try again.';
             Alert.alert('Error', msg);

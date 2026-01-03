@@ -74,7 +74,7 @@ export default function SignUp({ navigation }) {
 
       // Navigate to CompleteProfile regardless of role initially
       navigation.replace('CompleteProfile');
-    } catch (err) {
+    } catch (err: any) {
       const errMsg =
         err.response?.data?.error ||
         err.response?.data?.message ||

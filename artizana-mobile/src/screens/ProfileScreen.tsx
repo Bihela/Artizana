@@ -6,7 +6,7 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 
 const ProfileScreen = ({ navigation }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -30,9 +30,8 @@ const ProfileScreen = ({ navigation }) => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(response.data.user);
-            } catch (err) {
-                console.error('Failed to fetch profile', err);
-                setError('Failed to load profile');
+            } catch (err: any) {
+                console.log('Profile fetch error:', err);
                 if (err.response && err.response.status === 401) {
                     navigation.replace('Login');
                 }
