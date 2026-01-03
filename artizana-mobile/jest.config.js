@@ -6,5 +6,5 @@ module.exports = {
   ],
   setupFiles: ["./jest-setup.js"],
   setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect"],
-  testMatch: ["**/__tests__/**/*.test.js", "**/tests/**/*.test.js"],
+  testMatch: ["**/__tests__/**/*.test.[jt]s?(x)", "**/tests/**/*.test.[jt]s?(x)"],
 };

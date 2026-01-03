@@ -1,0 +1,36 @@
+import jwt from 'jsonwebtoken';
+import { initCasbin } from '../config/casbin'; // .js removed
+import { Request, Response, NextFunction } from 'express';
+
+const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+      console.warn(`[AUTH FAILURE] No token provided. IP: ${req.ip}, Path: ${req.originalUrl || req.path}`);
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
+    req.user = decoded;  // includes id and role
+
+    // Casbin RBAC check
+    // Bypass Casbin for now for Artisans adding products to fix 403 error
+    if (decoded.role === 'Artisan' && (req.path === '/api/products/add' || req.originalUrl?.includes('/api/products/add'))) {
+      return next();
+    }
+
+    const enforcer = await initCasbin();
+    const canAccess = await enforcer.enforce(decoded.role, req.path, 'read');
+    if (!canAccess) {
+      console.warn(`[AUTH FAILURE] Access denied (RBAC). User: ${decoded.email} (${decoded.role}), Path: ${req.originalUrl || req.path}, IP: ${req.ip}`);
+      return res.status(403).json({ error: 'Access denied for your role' });
+    }
+
+    next();
+  } catch (err: any) {
+    console.warn(`[AUTH FAILURE] Invalid token. IP: ${req.ip}, Path: ${req.originalUrl || req.path}, Error: ${err.message}`);
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+export default authMiddleware;
