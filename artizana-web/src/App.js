@@ -1,24 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Layout from './components/Layout';
+import SignUp from './pages/SignUp';
+import CompleteProfile from './pages/CompleteProfile';
+import NGOApplicationSuccess from './pages/NGOApplicationSuccess';
+import NGOApplyForm from './pages/NGOApplyForm';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
+import AddProduct from './pages/AddProduct';
+
+
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/complete-profile" element={<CompleteProfile />} />
+          <Route path="/ngoapply" element={<NGOApplyForm />} />
+          <Route path="/ngo-success" element={<NGOApplicationSuccess />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/add-product" element={<AddProduct />} />
+
+          {/* KAN-6 role based dashboards - Temporarily showing Profile page */}
+          <Route path="/buyer-dashboard" element={<Profile />} />
+          <Route path="/artisan-dashboard" element={<Profile />} />
+          <Route path="/ngo-dashboard" element={<Profile />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 

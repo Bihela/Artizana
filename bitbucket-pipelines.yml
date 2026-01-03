@@ -1,0 +1,86 @@
+# bitbucket-pipelines.yml
+image: node:20
+
+options:
+  max-time: 15
+
+definitions:
+  caches:
+    node: node_modules
+
+  steps:
+    - step: &install-backend
+        name: Backend – Install
+        caches:
+          - node
+        script:
+          - cd artizana-backend
+          - npm ci
+        artifacts:
+          - artizana-backend/node_modules/**
+
+    - step: &test-backend
+        name: Backend – Test
+        script:
+          - cd artizana-backend
+          - npm test -- --coverage
+
+    - step: &install-mobile
+        name: Mobile – Install
+        caches:
+          - node
+        script:
+          - cd artizana-mobile
+          - npm ci
+        artifacts:
+          - artizana-mobile/node_modules/**
+
+    - step: &test-mobile
+        name: Mobile – Test
+        script:
+          - cd artizana-mobile
+          - npm test
+
+    - step: &install-web
+        name: Web – Install
+        caches:
+          - node
+        script:
+          - cd artizana-web
+          - npm ci
+        artifacts:
+          - artizana-web/node_modules/**
+
+    - step: &test-web-unit
+        name: Web – Unit & Jest
+        script:
+          - cd artizana-web
+          - npm test
+
+
+
+pipelines:
+  pull-requests:
+    '**': # Runs on all Pull Requests
+      - parallel:
+          - step: *install-backend
+          - step: *install-mobile
+          - step: *install-web
+      - parallel:
+          - step: *test-backend
+          - step: *test-mobile
+          - step: *test-web-unit
+
+  branches:
+    dev:
+      - parallel:
+          - step: *install-backend
+          - step: *install-mobile
+          - step: *install-web
+      - parallel:
+          - step: *test-backend
+          - step: *test-mobile
+          - step: *test-web-unit
+
+
+
