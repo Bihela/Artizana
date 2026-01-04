@@ -57,9 +57,11 @@ app.use((req, res, next) => {
 });
 
 // ===== MongoDB Connection =====
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB Atlas connected'))
-  .catch(err => console.error('MongoDB connection error:', err.message));
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB Atlas connected'))
+    .catch(err => console.error('MongoDB connection error:', err.message));
+}
 
 // ===== Routes =====
 app.use('/api/auth', authRouter);
