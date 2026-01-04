@@ -20,9 +20,10 @@ definitions:
           - artizana-backend/node_modules/**
 
     - step: &test-backend
-        name: Backend – Test
+        name: Backend – Test & Build
         script:
           - cd artizana-backend
+          - npm run build
           - npm test -- --coverage
 
     - step: &install-mobile
@@ -36,9 +37,10 @@ definitions:
           - artizana-mobile/node_modules/**
 
     - step: &test-mobile
-        name: Mobile – Test
+        name: Mobile – Test & Type Check
         script:
           - cd artizana-mobile
+          - npx tsc --noEmit
           - npm test
 
     - step: &install-web
@@ -52,9 +54,10 @@ definitions:
           - artizana-web/node_modules/**
 
     - step: &test-web-unit
-        name: Web – Unit & Jest
+        name: Web – Test & Build
         script:
           - cd artizana-web
+          - npm run build
           - npm test
 
 
