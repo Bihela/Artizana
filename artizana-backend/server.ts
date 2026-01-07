@@ -63,9 +63,11 @@ if (!mongoUri) {
   process.exit(1);
 }
 
-mongoose.connect(mongoUri)
-  .then(() => console.log('MongoDB Atlas connected'))
-  .catch((err: Error) => console.error('MongoDB connection error:', err.message));
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(mongoUri)
+    .then(() => console.log('MongoDB Atlas connected'))
+    .catch((err: Error) => console.error('MongoDB connection error:', err.message));
+}
 
 // ===== Routes =====
 app.use('/api/auth', authRouter);
