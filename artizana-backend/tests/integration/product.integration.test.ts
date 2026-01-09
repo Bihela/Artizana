@@ -15,9 +15,9 @@ const mockSave = jest.fn();
 }));
 
 // Mock Auth Middleware
-jest.mock('../../src/middleware/auth', () => (req, res, next) => {
+jest.mock('../../src/middleware/auth', () => (req: any, res: any, next: any) => {
     // Simulate authenticated Artisan
-    req.user = { id: 'artisan123', role: 'Artisan' };
+    req.user = { _id: 'artisan123', role: 'Artisan' };
     next();
 });
 
@@ -69,5 +69,53 @@ describe('Product Integration Tests', () => {
 
         expect(res.status).toBe(500);
         expect(res.body.message).toBe('Server error while adding product');
+    });
+
+    it('PUT /api/products/:id - success', async () => {
+        const productId = 'prod_integration_1';
+        const updates = { title: 'Updated Title', price: 150 };
+
+        // Mock findById to return a product owned by the user
+        const mockProduct = {
+            ...validProduct,
+            _id: productId,
+            artisan: 'artisan123',
+            save: jest.fn().mockResolvedValue(true),
+            toString: () => productId
+        };
+        (Product.findById as jest.Mock).mockResolvedValue(mockProduct);
+
+        const res = await request(app)
+            .put(`/api/products/${productId}`)
+            .send(updates);
+
+        expect(res.status).toBe(200);
+        expect(res.body.message).toBe('Product updated successfully');
+        expect(mockProduct.title).toBe('Updated Title');
+        expect(mockProduct.price).toBe(150);
+        expect(mockProduct.save).toHaveBeenCalled();
+    });
+
+    it('PUT /api/products/:id - unauthorized (ownership check)', async () => {
+        const productId = 'prod_other_1';
+        const updates = { title: 'Hacked Title' };
+
+        // Mock findById to return a product owned by SOMEONE ELSE
+        const mockProduct = {
+            ...validProduct,
+            _id: productId,
+            artisan: 'other_artisan',
+            save: jest.fn(),
+            toString: () => productId
+        };
+        (Product.findById as jest.Mock).mockResolvedValue(mockProduct);
+
+        const res = await request(app)
+            .put(`/api/products/${productId}`)
+            .send(updates);
+
+        expect(res.status).toBe(403);
+        expect(res.body.message).toContain('Access denied');
+        expect(mockProduct.save).not.toHaveBeenCalled();
     });
 });
