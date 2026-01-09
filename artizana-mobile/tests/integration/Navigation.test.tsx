@@ -1,7 +1,7 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import TabNavigator from "../../navigation/TabNavigator";
+import TabNavigator from "../../src/navigation/TabNavigator";
 
 
 

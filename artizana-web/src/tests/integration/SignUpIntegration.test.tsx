@@ -23,7 +23,7 @@ jest.mock('axios');
 describe('SignUp Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    axios.post.mockResolvedValue({ data: { token: 'mock-token' } });
+    (axios.post as jest.Mock).mockResolvedValue({ data: { token: 'mock-token' } });
   });
 
   test('navigates to dashboard on successful signup', async () => {

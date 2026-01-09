@@ -8,19 +8,19 @@ import SignUp from '../../pages/SignUp';
 // important: mock both useNavigate and Link
 jest.mock('react-router-dom', () => ({
   useNavigate: jest.fn(),
-  Link: ({ children, ...props }) => <a {...props}>{children}</a>,
+  Link: ({ children, ...props }: { children: React.ReactNode }) => <a {...props}>{children}</a>,
 }));
 
 jest.mock('axios');
 
 describe('SignUp Component', () => {
-  let mockNavigate;
+  let mockNavigate: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockNavigate = jest.fn();
-    useNavigate.mockReturnValue(mockNavigate);
-    axios.post.mockResolvedValue({ data: { token: 'mock-token' } });
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+    (axios.post as jest.Mock).mockResolvedValue({ data: { token: 'mock-token' } });
   });
 
   test('renders form fields', () => {

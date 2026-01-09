@@ -20,7 +20,7 @@ jest.mock('axios');
 
 describe('NGOApplyForm - Integration Test', () => {
   beforeEach(() => {
-    axios.post.mockResolvedValue({ data: { success: true } });
+    (axios.post as jest.Mock).mockResolvedValue({ data: { success: true } });
     mockNavigate.mockReset();
   });
 
@@ -28,7 +28,7 @@ describe('NGOApplyForm - Integration Test', () => {
     render(
       <MemoryRouter>
         <NGOApplyForm />
-        </MemoryRouter>
+      </MemoryRouter>
     );
 
     await userEvent.type(screen.getByPlaceholderText('e.g. Hope Foundation'), 'Light NGO');

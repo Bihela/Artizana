@@ -38,7 +38,7 @@ describe('CompleteProfile Integration', () => {
 
     test('loads user data and pre-fills form', async () => {
         // Mock GET /me
-        axios.get.mockResolvedValue({
+        (axios.get as jest.Mock).mockResolvedValue({
             data: {
                 user: {
                     name: 'Test User',
@@ -71,14 +71,14 @@ describe('CompleteProfile Integration', () => {
 
     test('submits form and redirects to dashboard', async () => {
         // Mock GET /me
-        axios.get.mockResolvedValue({
+        (axios.get as jest.Mock).mockResolvedValue({
             data: {
                 user: { role: 'Buyer', name: 'Test', email: 't@t.com' }
             }
         });
 
         // Mock PUT /update-profile
-        axios.put.mockResolvedValue({ data: { token: 'new-token' } });
+        (axios.put as jest.Mock).mockResolvedValue({ data: { token: 'new-token' } });
 
         const { container } = render(
             <MemoryRouter>
@@ -94,8 +94,8 @@ describe('CompleteProfile Integration', () => {
         });
 
         // Fill required Buyer fields
-        const phoneInput = container.querySelector('input[name="phoneNumber"]');
-        const addressInput = container.querySelector('textarea[name="shippingAddress"]');
+        const phoneInput = container.querySelector('input[name="phoneNumber"]')!;
+        const addressInput = container.querySelector('textarea[name="shippingAddress"]')!;
 
         fireEvent.change(phoneInput, { target: { value: '0771234567' } });
         fireEvent.change(addressInput, { target: { value: '123 Street' } });

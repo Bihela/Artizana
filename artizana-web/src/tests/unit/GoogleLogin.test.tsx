@@ -32,7 +32,7 @@ describe('Login Component - Google Sign In', () => {
     const mockNavigate = jest.fn();
 
     beforeEach(() => {
-        useNavigate.mockReturnValue(mockNavigate);
+        (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
         global.fetch = jest.fn();
     });
 
@@ -44,14 +44,14 @@ describe('Login Component - Google Sign In', () => {
         // Mock success from Firebase
         const mockUser = { uid: '123' };
         const mockResult = { user: mockUser };
-        signInWithPopup.mockResolvedValue(mockResult);
+        (signInWithPopup as jest.Mock).mockResolvedValue(mockResult);
 
-        GoogleAuthProvider.credentialFromResult.mockReturnValue({
+        (GoogleAuthProvider.credentialFromResult as jest.Mock).mockReturnValue({
             idToken: 'mock_google_token'
         });
 
         // Mock success from backend
-        global.fetch.mockResolvedValue({
+        (global.fetch as jest.Mock).mockResolvedValue({
             ok: true,
             json: async () => ({
                 token: 'backend_jwt',
@@ -92,13 +92,13 @@ describe('Login Component - Google Sign In', () => {
 
     test('handles backend error gracefully', async () => {
         // Mock success from Firebase
-        signInWithPopup.mockResolvedValue({ user: {} });
-        GoogleAuthProvider.credentialFromResult.mockReturnValue({
+        (signInWithPopup as jest.Mock).mockResolvedValue({ user: {} });
+        (GoogleAuthProvider.credentialFromResult as jest.Mock).mockReturnValue({
             idToken: 'mock_google_token'
         });
 
         // Mock failure from backend
-        global.fetch.mockResolvedValue({
+        (global.fetch as jest.Mock).mockResolvedValue({
             ok: false,
             json: async () => ({ error: 'Invalid token' })
         });
