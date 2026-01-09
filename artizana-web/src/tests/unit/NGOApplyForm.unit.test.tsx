@@ -12,12 +12,12 @@ jest.mock('react-router-dom', () => ({
 jest.mock('axios'); // this now uses the one from setupTests.js
 
 describe('NGOApplyForm - Unit Tests', () => {
-  let mockNavigate;
+  let mockNavigate: jest.Mock;
 
   beforeEach(() => {
     mockNavigate = jest.fn();
-    useNavigate.mockReturnValue(mockNavigate);
-    axios.post.mockReset();
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+    (axios.post as jest.Mock).mockReset();
     global.URL.createObjectURL = jest.fn(() => 'blob:http://localhost/12345');
   });
 
@@ -39,7 +39,7 @@ describe('NGOApplyForm - Unit Tests', () => {
     const previewImage = await screen.findByAltText('NGO Logo');
 
     expect(previewImage).toBeInTheDocument();
-    expect(previewImage.src).toMatch(/^blob:http:\/\/localhost\/\d+$/);
+    expect((previewImage as HTMLImageElement).src).toMatch(/^blob:http:\/\/localhost\/\d+$/);
   });
 
   test('rejects logo larger than 5MB', async () => {
@@ -55,7 +55,7 @@ describe('NGOApplyForm - Unit Tests', () => {
   });
 
   test('submits form successfully with required files', async () => {
-    axios.post.mockResolvedValue({ data: { success: true } });
+    (axios.post as jest.Mock).mockResolvedValue({ data: { success: true } });
 
     render(<NGOApplyForm />);
 
@@ -82,7 +82,7 @@ describe('NGOApplyForm - Unit Tests', () => {
   });
 
   test('shows error on submission failure', async () => {
-    axios.post.mockRejectedValue({ response: { data: { error: 'Server error' } } });
+    (axios.post as jest.Mock).mockRejectedValue({ response: { data: { error: 'Server error' } } });
 
     render(<NGOApplyForm />);
     fireEvent.change(screen.getByPlaceholderText('e.g. Hope Foundation'), { target: { value: 'Test' } });

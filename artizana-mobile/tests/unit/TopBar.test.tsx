@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import TopBar from '../../components/TopBar';
+import TopBar from '../../src/components/TopBar';
 
 // Mock the HeroIcons because they are external components (often SVGs)
 jest.mock('react-native-heroicons/outline', () => ({
