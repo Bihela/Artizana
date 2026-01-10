@@ -30,11 +30,15 @@ jest.mock("nativewind", () => {
 });
 
 // AsyncStorage mock
+// AsyncStorage mock
 jest.mock('@react-native-async-storage/async-storage', () => ({
-    getItem: jest.fn(),
-    setItem: jest.fn(),
-    removeItem: jest.fn(),
-    clear: jest.fn(),
+    __esModule: true,
+    default: {
+        getItem: jest.fn(() => Promise.resolve(null)),
+        setItem: jest.fn(() => Promise.resolve()),
+        removeItem: jest.fn(() => Promise.resolve()),
+        clear: jest.fn(() => Promise.resolve()),
+    },
 }));
 
 // Heroicons mock

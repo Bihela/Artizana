@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import AddProduct from './pages/AddProduct';
 import Carousel from './components/Carousel';
+import { LanguageProvider } from './context/LanguageContext';
 
 const CarouselDemo = () => (
   <div className="p-8 max-w-2xl mx-auto">
@@ -27,28 +28,30 @@ const CarouselDemo = () => (
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/complete-profile" element={<CompleteProfile />} />
-          <Route path="/ngoapply" element={<NGOApplyForm />} />
-          <Route path="/ngo-success" element={<NGOApplicationSuccess />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/add-product" element={<AddProduct />} />
+    <LanguageProvider>
+      <Router>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
+            <Route path="/ngoapply" element={<NGOApplyForm />} />
+            <Route path="/ngo-success" element={<NGOApplicationSuccess />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/add-product" element={<AddProduct />} />
 
-          {/* Temporary Demo Route */}
-          <Route path="/demo-carousel" element={<CarouselDemo />} />
+            {/* Temporary Demo Route */}
+            <Route path="/demo-carousel" element={<CarouselDemo />} />
 
-          {/* KAN-6 role based dashboards - Temporarily showing Profile page */}
-          <Route path="/buyer-dashboard" element={<Profile />} />
-          <Route path="/artisan-dashboard" element={<Profile />} />
-          <Route path="/ngo-dashboard" element={<Profile />} />
-        </Route>
-      </Routes>
-    </Router>
+            {/* KAN-6 role based dashboards - Temporarily showing Profile page */}
+            <Route path="/buyer-dashboard" element={<Profile />} />
+            <Route path="/artisan-dashboard" element={<Profile />} />
+            <Route path="/ngo-dashboard" element={<Profile />} />
+          </Route>
+        </Routes>
+      </Router>
+    </LanguageProvider>
   );
 }
 
