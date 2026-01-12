@@ -9,12 +9,13 @@ import {
     UserCircleIcon
 } from 'react-native-heroicons/outline';
 import {
-    HomeScreen,
     ProductsScreen,
     OrdersScreen,
     AnalyticsScreen
 } from '../screens/Placeholders';
+import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import DemoScreen from '../screens/DemoScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -95,6 +96,16 @@ const TabNavigator = () => {
                 component={ProfileScreen}
                 options={{
                     tabBarIcon: ({ color, size }: { color: string; size: number }) => <UserCircleIcon color={color} size={size} />
+                }}
+            />
+
+            {/* Mobile Feature Testing Tab - KAN-Requested */}
+            <Tab.Screen
+                name="Demo"
+                component={DemoScreen}
+                options={{
+                    tabBarLabel: 'Test',
+                    tabBarIcon: ({ color, size }: { color: string; size: number }) => <ClipboardDocumentListIcon color={color} size={size} /> // Using existing icon for now
                 }}
             />
         </Tab.Navigator >

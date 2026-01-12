@@ -1,8 +1,16 @@
-// src/App.test.js
 import { render, screen } from '@testing-library/react';
 import App from '../../App';
+import axios from 'axios';
 
-test('renders Choose your language heading', () => {
+jest.mock('axios', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+  },
+}));
+
+test('renders Home page with Hero section', async () => {
+  axios.get.mockResolvedValue({ data: [] });
   render(<App />);
-  expect(screen.getByText(/Choose your language/i)).toBeInTheDocument();
+  expect(screen.getByText(/Authentic Craftsmanship/i)).toBeInTheDocument();
 });

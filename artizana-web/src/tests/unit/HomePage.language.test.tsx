@@ -1,25 +1,65 @@
-// src/__tests__/unit/HomePage.language.test.js
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import Home from '../../pages/Home';
+import { LanguageProvider } from '../../context/LanguageContext';
+import '@testing-library/jest-dom';
 
-describe('HomePage - Language Selector', () => {
-  test('shows language modal by default', () => {
-    render(<Home />);
+// Mock child components
+jest.mock('../../components/HeroSection', () => () => <div data-testid="hero-section">Hero Section</div>);
+jest.mock('../../components/ProductCard', () => () => <div data-testid="product-card">Product Card</div>);
+// Mock the Modal to test functionality
+jest.mock('../../components/LanguageSelectorModal', () => ({ onSelect }: { onSelect: (lang: string) => void }) => (
+    <div data-testid="language-modal">
+        <button onClick={() => onSelect('en')}>English</button>
+        <button onClick={() => onSelect('si')}>Sinhala</button>
+    </div>
+));
 
-    // Modal heading from LanguageSelectorModal
-    expect(screen.getByText(/Choose your language/i)).toBeInTheDocument();
-    expect(screen.getByText(/English/i)).toBeInTheDocument();
-    expect(screen.getByText(/සිංහල/i)).toBeInTheDocument();
-  });
+describe('Home Page Language Selection', () => {
+    beforeEach(() => {
+        localStorage.clear();
+    });
 
-  test('closes modal when language is selected', () => {
-    render(<Home />);
+    it('shows language modal for first-time users (no language set)', async () => {
+        render(
+            <LanguageProvider>
+                <Home />
+            </LanguageProvider>
+        );
 
-    const englishBtn = screen.getByText(/English/i);
-    fireEvent.click(englishBtn);
+        expect(await screen.findByTestId('language-modal')).toBeInTheDocument();
+    });
 
-    // Modal should disappear (Home.js sets isModalOpen to false)
-    expect(screen.queryByText(/Choose your language/i)).toBeNull();
-  });
+    it('does not show modal if language is already set', async () => {
+        localStorage.setItem('userLanguage', 'en');
+        render(
+            <LanguageProvider>
+                <Home />
+            </LanguageProvider>
+        );
+
+        // Wait to ensure it doesn't appear
+        await waitFor(() => {
+            expect(screen.queryByTestId('language-modal')).not.toBeInTheDocument();
+        });
+    });
+
+    it('saves language when selected', async () => {
+        render(
+            <LanguageProvider>
+                <Home />
+            </LanguageProvider>
+        );
+
+        const modal = await screen.findByTestId('language-modal');
+        expect(modal).toBeInTheDocument();
+
+        fireEvent.click(screen.getByText('English'));
+
+        expect(localStorage.getItem('userLanguage')).toBe('en');
+        // Modal should close
+        await waitFor(() => {
+            expect(screen.queryByTestId('language-modal')).not.toBeInTheDocument();
+        });
+    });
 });

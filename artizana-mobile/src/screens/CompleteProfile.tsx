@@ -148,7 +148,7 @@ export default function CompleteProfile({ navigation, route }: { navigation: any
                 await AsyncStorage.setItem('token', res.data.token);
             }
 
-            Alert.alert('Success', 'Profile Updated Successfully!');
+            // Alert.alert('Success', 'Profile Updated Successfully!');
             setShowLanguageModal(true);
 
         } catch (err: any) {

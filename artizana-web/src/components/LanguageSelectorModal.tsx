@@ -1,12 +1,23 @@
 // src/components/LanguageSelectorModal.js
 import React from 'react';
 
-const LANGUAGES = [
+interface Language {
+  code: string;
+  label: string;
+  flagUrl: string;
+}
+
+const LANGUAGES: Language[] = [
   { code: 'en', label: 'English', flagUrl: 'https://flagcdn.com/w80/gb.png' },
   { code: 'si', label: 'සිංහල', flagUrl: 'https://flagcdn.com/w80/lk.png' },
 ];
 
-export default function LanguageSelectorModal({ onSelect }) {
+interface LanguageSelectorModalProps {
+  onSelect: (lang: string) => void;
+  isOpen?: boolean; // Making optional since conditional rendering handles it mostly, but good for PropType
+}
+
+export default function LanguageSelectorModal({ onSelect }: LanguageSelectorModalProps) {
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
