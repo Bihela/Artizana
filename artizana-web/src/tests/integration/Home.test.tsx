@@ -16,20 +16,22 @@ const mockProducts = [
     { _id: '2', title: 'Product 2', price: 2000, images: [] }
 ];
 
+import { MemoryRouter } from 'react-router-dom';
+
+// ... existing mocks ...
+
 describe('Home Page Integration', () => {
     test('renders loading state initially', () => {
         (axios.get as jest.Mock).mockReturnValue(new Promise(() => { }));
-        render(<Home />);
+        render(<MemoryRouter><Home /></MemoryRouter>);
         // Assuming the spinner corresponds to a role or class, checking for existence implies loading
-        // Since specific spinner text isn't there, checking for absence of products works or finding the spinner div if test id was added
-        // Ideally we add data-testid to spinner in Home.tsx but for now we check product absence
         expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
     });
 
     test('renders products after successful fetch', async () => {
         (axios.get as jest.Mock).mockResolvedValue({ data: mockProducts });
 
-        render(<Home />);
+        render(<MemoryRouter><Home /></MemoryRouter>);
 
         await waitFor(() => {
             expect(screen.getByText('Top Picks for You')).toBeInTheDocument();
@@ -41,7 +43,7 @@ describe('Home Page Integration', () => {
     test('renders empty state when no products', async () => {
         (axios.get as jest.Mock).mockResolvedValue({ data: [] });
 
-        render(<Home />);
+        render(<MemoryRouter><Home /></MemoryRouter>);
 
         await waitFor(() => {
             expect(screen.getByText('No products found at the moment.')).toBeInTheDocument();
