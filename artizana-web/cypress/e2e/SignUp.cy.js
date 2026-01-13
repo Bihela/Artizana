@@ -1,9 +1,10 @@
+// cypress/e2e/SignUp.cy.js
 describe('Sign Up Flow', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000');
   });
 
-  it('successfully signs up as Buyer and redirects to dashboard', () => {
+  it('successfully signs up as Buyer and goes through language popup', () => {
     // MOCK API RESPONSE
     cy.intercept('POST', '**/auth/register', {
       statusCode: 200,
@@ -21,7 +22,13 @@ describe('Sign Up Flow', () => {
     // CLICK SUBMIT
     cy.contains('button', 'Sign Up').click();
 
-    // WAIT FOR API REQUEST
+    // LANGUAGE MODAL SHOULD APPEAR
+    cy.contains('Choose your language').should('be.visible');
+
+    // SELECT ENGLISH
+    cy.contains('button', 'English').click();
+
+    // WAIT FOR API REQUEST AFTER LANGUAGE SELECTION
     cy.wait('@register').its('request.body').should((body) => {
       expect(body).to.include({
         email: 'test@example.com',
@@ -30,13 +37,19 @@ describe('Sign Up Flow', () => {
       });
     });
 
-    // ASSERT REDIRECT
-    cy.url().should('include', '/buyer-dashboard');
+    // ASSERT REDIRECT TO /home
+    cy.url().should('include', '/home');
 
     // OPTIONAL: Check localStorage for token
     cy.window().then((win) => {
       const token = win.localStorage.getItem('token');
       expect(token).to.eq('mock-jwt-token');
+    });
+
+    // And language preference
+    cy.window().then((win) => {
+      const lang = win.localStorage.getItem('preferredLanguage');
+      expect(lang).to.eq('en');
     });
   });
 });

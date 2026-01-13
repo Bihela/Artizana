@@ -1,0 +1,254 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Carousel Component renders correct number of pagination dots 1`] = `
+<View
+  style={
+    [
+      {
+        "backgroundColor": "#f0f0f0",
+        "position": "relative",
+      },
+      {
+        "height": 300,
+      },
+    ]
+  }
+>
+  <RCTScrollView
+    data={
+      [
+        "https://example.com/1.jpg",
+        "https://example.com/2.jpg",
+        "https://example.com/3.jpg",
+      ]
+    }
+    decelerationRate="fast"
+    getItem={[Function]}
+    getItemCount={[Function]}
+    horizontal={true}
+    keyExtractor={[Function]}
+    onContentSizeChange={[Function]}
+    onLayout={[Function]}
+    onMomentumScrollBegin={[Function]}
+    onMomentumScrollEnd={[Function]}
+    onScroll={[Function]}
+    onScrollBeginDrag={[Function]}
+    onScrollEndDrag={[Function]}
+    onViewableItemsChanged={[Function]}
+    pagingEnabled={true}
+    removeClippedSubviews={false}
+    renderItem={[Function]}
+    scrollEventThrottle={16}
+    showsHorizontalScrollIndicator={false}
+    stickyHeaderIndices={[]}
+    viewabilityConfig={
+      {
+        "itemVisiblePercentThreshold": 50,
+      }
+    }
+    viewabilityConfigCallbackPairs={
+      [
+        {
+          "onViewableItemsChanged": [Function],
+          "viewabilityConfig": {
+            "itemVisiblePercentThreshold": 50,
+          },
+        },
+      ]
+    }
+  >
+    <View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          style={
+            {
+              "height": 300,
+              "width": 750,
+            }
+          }
+        >
+          <Image
+            accessibilityLabel="Image 1"
+            resizeMode="cover"
+            source={
+              {
+                "uri": "https://example.com/1.jpg",
+              }
+            }
+            style={
+              [
+                {
+                  "backgroundColor": "#ddd",
+                },
+                {
+                  "height": 300,
+                  "width": 750,
+                },
+              ]
+            }
+          />
+        </View>
+      </View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          style={
+            {
+              "height": 300,
+              "width": 750,
+            }
+          }
+        >
+          <Image
+            accessibilityLabel="Image 2"
+            resizeMode="cover"
+            source={
+              {
+                "uri": "https://example.com/2.jpg",
+              }
+            }
+            style={
+              [
+                {
+                  "backgroundColor": "#ddd",
+                },
+                {
+                  "height": 300,
+                  "width": 750,
+                },
+              ]
+            }
+          />
+        </View>
+      </View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          style={
+            {
+              "height": 300,
+              "width": 750,
+            }
+          }
+        >
+          <Image
+            accessibilityLabel="Image 3"
+            resizeMode="cover"
+            source={
+              {
+                "uri": "https://example.com/3.jpg",
+              }
+            }
+            style={
+              [
+                {
+                  "backgroundColor": "#ddd",
+                },
+                {
+                  "height": 300,
+                  "width": 750,
+                },
+              ]
+            }
+          />
+        </View>
+      </View>
+    </View>
+  </RCTScrollView>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "bottom": 16,
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "position": "absolute",
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        [
+          {
+            "borderRadius": 4,
+            "height": 8,
+            "marginHorizontal": 4,
+            "width": 8,
+          },
+          {
+            "backgroundColor": "#fff",
+          },
+          {
+            "height": 10,
+            "width": 10,
+          },
+        ]
+      }
+    />
+    <View
+      style={
+        [
+          {
+            "borderRadius": 4,
+            "height": 8,
+            "marginHorizontal": 4,
+            "width": 8,
+          },
+          {
+            "backgroundColor": "rgba(255, 255, 255, 0.5)",
+          },
+          null,
+        ]
+      }
+    />
+    <View
+      style={
+        [
+          {
+            "borderRadius": 4,
+            "height": 8,
+            "marginHorizontal": 4,
+            "width": 8,
+          },
+          {
+            "backgroundColor": "rgba(255, 255, 255, 0.5)",
+          },
+          null,
+        ]
+      }
+    />
+  </View>
+</View>
+`;
