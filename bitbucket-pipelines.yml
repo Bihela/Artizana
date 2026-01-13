@@ -1,116 +1,165 @@
-# bitbucket-pipelines.yml
-image: node:20
+name: CI - Tests
 
-options:
-  max-time: 15
+on:
+  push:
+    branches:
+      - dev
+      - main
+      - sprint
+  pull_request:
+    branches:
+      - '**'   # all branches
 
-definitions:
-  caches:
-    node: node_modules
-    cypress: ~/.cache/Cypress
+permissions:
+  contents: read
 
-  steps:
-    - step: &install-backend
-        name: Backend – Install
-        caches:
-          - node
-        script:
-          - cd artizana-backend
-          - npm ci
-        artifacts:
-          - artizana-backend/node_modules/**
+jobs:
 
-    - step: &test-backend
-        name: Backend – Test
-        script:
-          - cd artizana-backend
-          - npm test -- --coverage
+  # ── Install Dependencies ────────────────────────────────────────────────
+  install:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        project: [backend, mobile, web]
+      fail-fast: false
 
-    - step: &install-mobile
-        name: Mobile – Install
-        caches:
-          - node
-        script:
-          - cd artizana-mobile
-          - npm ci
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - step: &test-mobile
-        name: Mobile – Test
-        script:
-          - cd artizana-mobile
-          - npm test
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            artizana-${{ matrix.project }}/package-lock.json
 
-    - step: &install-web
-        name: Web – Install
-        caches:
-          - node
-        script:
-          - cd artizana-web
-          - npm ci
+      - name: Install dependencies (${{ matrix.project }})
+        working-directory: artizana-${{ matrix.project }}
+        run: npm ci
 
-    - step: &test-web-unit
-        name: Web – Unit & Jest
-        script:
-          - cd artizana-web
-          - npm test
+      - name: Cache Cypress (only for web)
+        if: matrix.project == 'web'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('artizana-web/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
 
-    - step: &test-web-cypress
-        name: Web – Cypress E2E
-        image: cypress/browsers:node20.17.0-chrome127
-        caches:
-          - node
-          - cypress
-        script:
-          - cd artizana-web
-          - npm run dev &
-          - npx wait-on http://localhost:3000 -t 30000
-          - npx cypress run --headless
+      - name: Upload node_modules artifact (${{ matrix.project }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_modules-${{ matrix.project }}
+          path: artizana-${{ matrix.project }}/node_modules/
+          retention-days: 1
 
-pipelines:
-  default: []
 
-  pull-requests:
-    '**':
-      - parallel:
-          - step: *install-backend
-          - step: *install-mobile
-          - step: *install-web
-      - parallel:
-          - step: *test-backend
-          - step: *test-mobile
-          - step: *test-web-unit
-          - step: *test-web-cypress
+  # ── Tests ───────────────────────────────────────────────────────────────
+  test-backend:
+    needs: install
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-  branches:
-    dev:
-      - parallel:
-          - step: *install-backend
-          - step: *install-mobile
-          - step: *install-web
-      - parallel:
-          - step: *test-backend
-          - step: *test-mobile
-          - step: *test-web-unit
-          - step: *test-web-cypress
+      - name: Download backend node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules-backend
+          path: artizana-backend/node_modules
 
-    main:
-      - parallel:
-          - step: *install-backend
-          - step: *install-mobile
-          - step: *install-web
-      - parallel:
-          - step: *test-backend
-          - step: *test-mobile
-          - step: *test-web-unit
-          - step: *test-web-cypress
+      - name: Run backend tests
+        working-directory: artizana-backend
+        run: npm test -- --coverage
 
-    sprint:
-      - parallel:
-          - step: *install-backend
-          - step: *install-mobile
-          - step: *install-web
-      - parallel:
-          - step: *test-backend
-          - step: *test-mobile
-          - step: *test-web-unit
-          - step: *test-web-cypress
+
+  test-mobile:
+    needs: install
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download mobile node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules-mobile
+          path: artizana-mobile/node_modules
+
+      - name: Run mobile tests
+        working-directory: artizana-mobile
+        run: npm test
+
+
+  test-web-unit:
+    needs: install
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download web node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules-web
+          path: artizana-web/node_modules
+
+      - name: Run web unit tests (Jest)
+        working-directory: artizana-web
+        run: npm test
+
+
+  test-web-cypress:
+    needs: install
+    runs-on: ubuntu-22.04
+    container:
+      image: cypress/browsers:node20.17.0-chrome127
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download web node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules-web
+          path: artizana-web/node_modules
+
+      - name: Start dev server in background
+        working-directory: artizana-web
+        run: npm run dev &
+
+      - name: Wait for dev server to be ready
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 2
+          max_attempts: 30
+          retry_on: error
+          command: curl --fail --silent http://localhost:3000 || exit 1
+
+      - name: Run Cypress E2E tests
+        working-directory: artizana-web
+        run: npx cypress run --headless
+
+
+  # ── Final status job (optional – makes the workflow green only if all pass) ──
+  tests-complete:
+    if: always()
+    needs: [test-backend, test-mobile, test-web-unit, test-web-cypress]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check all tests passed
+        run: |
+          [[ ${{ needs.test-backend.result }} == 'success' ]] &&
+          [[ ${{ needs.test-mobile.result }} == 'success' ]] &&
+          [[ ${{ needs.test-web-unit.result }} == 'success' ]] &&
+          [[ ${{ needs.test-web-cypress.result }} == 'success' ]] || exit 1
