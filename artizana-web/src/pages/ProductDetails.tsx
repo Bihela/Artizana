@@ -30,7 +30,7 @@ const ProductDetails = () => {
     const navigate = useNavigate();
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
-    const [imageIndex, setImageIndex] = useState(0);
+
     const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
