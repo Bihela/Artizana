@@ -50,9 +50,8 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
     }, []);
 
     const handleProductPress = (productId: string) => {
-        // Placeholder navigation
-        console.log('Navigate to product:', productId);
-        // navigation.navigate('ProductDetails', { id: productId });
+        // Navigate to product details
+        navigation.navigate('ProductDetails', { productId: productId });
     };
 
     if (loading && !refreshing) {

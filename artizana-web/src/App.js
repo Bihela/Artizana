@@ -9,6 +9,7 @@ import NGOApplyForm from './pages/NGOApplyForm';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import AddProduct from './pages/AddProduct';
+import ProductDetails from './pages/ProductDetails';
 import Carousel from './components/Carousel';
 import { LanguageProvider } from './context/LanguageContext';
 
@@ -40,6 +41,7 @@ function App() {
             <Route path="/ngo-success" element={<NGOApplicationSuccess />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/add-product" element={<AddProduct />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
 
             {/* Temporary Demo Route */}
             <Route path="/demo-carousel" element={<CarouselDemo />} />

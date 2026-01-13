@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
     _id: string;
@@ -16,7 +17,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
-    const { title, price, images, artisan } = product;
+    const navigate = useNavigate();
+    const { _id, title, price, images, artisan } = product;
 
     // State to handle image source, defaulting to the first image or a clean placeholder
     const [imgSrc, setImgSrc] = React.useState(images && images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80');
@@ -38,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
     return (
         <div
             className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer overflow-hidden border border-gray-100"
-            onClick={onClick}
+            onClick={onClick || (() => navigate(`/product/${_id}`))}
         >
             {/* Image Container */}
             <div className="relative h-64 w-full bg-gray-100">

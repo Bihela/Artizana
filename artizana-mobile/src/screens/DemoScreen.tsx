@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const DemoScreen = () => {
+    const navigation = useNavigation<any>();
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.content}>
@@ -13,6 +15,13 @@ const DemoScreen = () => {
                 <View style={styles.placeholderBox}>
                     <Text style={styles.placeholderText}>Future Content Here</Text>
                 </View>
+
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('ProductDetails', { productId: '69651ab3e658b8da455fb711' })}
+                >
+                    <Text style={styles.buttonText}>Open Test Product (Fake/1)</Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
@@ -55,6 +64,18 @@ const styles = StyleSheet.create({
     placeholderText: {
         color: '#9CA3AF',
         fontWeight: '500'
+    },
+    button: {
+        marginTop: 20,
+        backgroundColor: '#16a34a',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
     }
 });
 

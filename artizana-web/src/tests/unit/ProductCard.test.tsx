@@ -2,6 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ProductCard from '../../components/ProductCard';
 
+import { MemoryRouter } from 'react-router-dom';
+
 const mockProduct = {
     _id: '1',
     title: 'Test Product',
@@ -12,7 +14,11 @@ const mockProduct = {
 
 describe('ProductCard Component', () => {
     test('renders product details correctly', () => {
-        render(<ProductCard product={mockProduct} />);
+        render(
+            <MemoryRouter>
+                <ProductCard product={mockProduct} />
+            </MemoryRouter>
+        );
 
         expect(screen.getByText('Test Product')).toBeInTheDocument();
         expect(screen.getByText('LKR 5,000')).toBeInTheDocument();
@@ -24,7 +30,11 @@ describe('ProductCard Component', () => {
 
     test('calls onClick when clicked', () => {
         const handleClick = jest.fn();
-        render(<ProductCard product={mockProduct} onClick={handleClick} />);
+        render(
+            <MemoryRouter>
+                <ProductCard product={mockProduct} onClick={handleClick} />
+            </MemoryRouter>
+        );
 
         const card = screen.getByText('Test Product').closest('div');
         expect(card).not.toBeNull();

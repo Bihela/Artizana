@@ -64,18 +64,18 @@ const Carousel: React.FC<CarouselProps> = ({
     }
 
     return (
-        <div className="relative w-full group">
+        <div className="relative w-full h-full group">
             {/* Scroll Container */}
             <div
                 ref={scrollContainerRef}
-                className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-smooth"
+                className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-smooth"
                 onScroll={handleScroll}
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {images.map((src, index) => (
                     <div
                         key={index}
-                        className="w-full flex-shrink-0 snap-center relative aspect-video"
+                        className="w-full h-full flex-shrink-0 snap-center relative"
                     >
                         <img
                             src={src}

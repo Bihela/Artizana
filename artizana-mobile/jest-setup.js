@@ -64,5 +64,27 @@ jest.mock("react-native-heroicons/outline", () => {
         UserCircleIcon: MockIcon("UserCircleIcon"),
         ShoppingBagIcon: MockIcon("ShoppingBagIcon"),
         AcademicCapIcon: MockIcon("AcademicCapIcon"),
+        ArrowLeftIcon: MockIcon("ArrowLeftIcon"),
+        HeartIcon: MockIcon("HeartIcon"),
+        FlagIcon: MockIcon("FlagIcon"),
+        ShoppingCartIcon: MockIcon("ShoppingCartIcon"),
+        StarIcon: MockIcon("StarIcon"),
+    };
+});
+
+jest.mock("react-native-heroicons/solid", () => {
+    const React = require("react");
+    const { View, Text } = require("react-native");
+
+    const MockIcon = (name) => (props) =>
+        React.createElement(
+            View,
+            { testID: name, accessible: true },
+            React.createElement(Text, {}, name)
+        );
+
+    return {
+        StarIcon: MockIcon("StarIconSolid"),
+        ShoppingBagIcon: MockIcon("ShoppingBagIconSolid"),
     };
 });

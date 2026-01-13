@@ -28,7 +28,7 @@ const CompleteProfile = () => {
 
   // Get token from URL or LocalStorage
   const urlToken = searchParams.get('token');
-  const token = urlToken || localStorage.getItem('token');
+  const token = urlToken || localStorage.getItem('authToken');
 
   useEffect(() => {
     if (!token) {
@@ -38,7 +38,7 @@ const CompleteProfile = () => {
 
     // If URL token exists, sync to localStorage
     if (urlToken) {
-      localStorage.setItem('token', urlToken);
+      localStorage.setItem('authToken', urlToken);
     }
 
     fetchUser();
@@ -144,7 +144,7 @@ const CompleteProfile = () => {
 
       // Update token in localStorage if a new one is returned
       if (res.data.token) {
-        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('authToken', res.data.token);
       }
 
       // Redirect

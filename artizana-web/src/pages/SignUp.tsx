@@ -18,7 +18,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const roles = ['Buyer', 'Artisan', 'NGO/Edu Partner'];
+  const roles = ['Buyer', 'Artisan'];
 
 
 
@@ -115,7 +115,7 @@ const SignUp = () => {
           <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition" required />
 
           <select value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition">
-            {roles.map((r) => <option key={r} value={r}>{r === 'NGO/Edu Partner' ? 'NGO / Educational Partner' : r}</option>)}
+            {roles.map((r) => <option key={r} value={r}>{r}</option>)}
           </select>
 
           <label className="flex items-center space-x-3 cursor-pointer">

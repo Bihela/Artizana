@@ -3,10 +3,10 @@ import App from '../../App';
 import axios from 'axios';
 
 jest.mock('axios', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-  },
+  get: jest.fn(),
+  post: jest.fn(),
+  defaults: { headers: { common: {} } },
+  interceptors: { response: { use: jest.fn() } }
 }));
 
 test('renders Home page with Hero section', async () => {

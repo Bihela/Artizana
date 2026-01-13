@@ -6,6 +6,7 @@ const router = express.Router();
 
 import { updateProduct } from '../controllers/updateProduct';
 import { searchProducts } from '../controllers/searchProducts';
+import { getProduct } from '../controllers/getProduct';
 
 // POST /api/products/add
 // Using auth middleware to protect the route
@@ -14,6 +15,10 @@ router.post('/add', auth, addProduct);
 // GET /api/products/search
 // Public route
 router.get('/search', searchProducts);
+
+// GET /api/products/:id
+// Get single product details
+router.get('/:id', getProduct);
 
 // PUT /api/products/:id
 // Update product details

@@ -16,6 +16,7 @@ import NgoDashboard from './src/screens/NgoDashboard';
 import { LanguageProvider } from './src/context/LanguageContext';
 import CompleteProfile from './src/screens/CompleteProfile';
 import AddProductScreen from './src/screens/AddProductScreen';
+import ProductDetailsScreen from './src/screens/ProductDetailsScreen';
 
 // KAN-91: Navigation
 import TabNavigator from './src/navigation/TabNavigator';
@@ -72,6 +73,11 @@ export default function App() {
           <Stack.Screen
             name="MainTabs"
             component={TabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ProductDetails"
+            component={ProductDetailsScreen}
             options={{ headerShown: false }}
           />
 
